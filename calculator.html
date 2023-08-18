@@ -3,6 +3,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Calculator</title>
         <style>
+            @media (min-width:400px) {
+                
+            
             .body{
                 background-image: linear-gradient(to right,rgba(255, 0, 0, 0.50),rgba(0, 128, 0, 0.5));
             }
@@ -69,6 +72,78 @@
             #row5{
                 padding-bottom: 0.5vh;
             }
+        }
+        @media (min-width:0px) {
+                
+            
+                .body{
+                    background-image: linear-gradient(to right,rgba(255, 0, 0, 0.50),rgba(0, 128, 0, 0.5));
+                }
+                .maincalculator{
+                    border: 1px solid;
+                    background:grey;
+                    position:relative;
+                    top:50%;
+                    left:50%;
+                    height: 50%;
+                    width:80%;
+                    transform:translate(-50%,-50%);
+                    padding-top: 1vh;
+                    padding-bottom: 1vh;
+                    padding-left: 1vh;
+                    padding-right: 1vh;
+                }
+                #screen1{
+                    position: relative;
+                    display:flex;
+                    height:5%;
+                    width:100%;
+                    font-size: 2vh;
+                    background: lightgray;
+                    border-bottom: 0 solid;
+                    text-align: right;
+                    padding-top: 2px;
+                    padding-right: 1vh;
+                }
+                #screen2{
+                    position: relative;
+                    display:flex;
+                    height: 15%;
+                    width:100%;
+                    font-size: 4vh;
+                    background: lightgray;
+                    border-top: 0 solid;
+                    text-align: right;
+                }
+                .row{
+                    margin: auto;
+                    display: flex;
+                    position: relative;
+                    background-color: rgb(0, 128, 119);
+                    white-space: nowrap;
+                    height: 15.6%;
+                    width: 98%;
+                    padding-left: 0.5vh;
+                    padding-right: 0.5vh;
+                }
+                .number{
+                    margin:auto;
+                    position: relative;
+                    height:100%;
+                    width: 25%;
+                    font-size: 4vh;
+                }
+                #C,#equal{
+                    width: 50%;
+                }
+                #row1{
+                    padding-top: 0.5vh;
+                }
+                #row5{
+                    padding-bottom: 0.5vh;
+                }
+            }
+
         </style>
 
 
