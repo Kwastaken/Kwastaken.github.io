@@ -156,18 +156,13 @@
             </div>
         <script>
             window.addEventListener("resize", () => {
-                const width = window.innerWidth;
-                const height = window.innerHeight;
-                let ele = document.querySelector(':root');
+                let ele = document.querySelector('.maincalculator');
                 ele.style.setProperty('--width', window.innerHeight/800)
             });
-            window.onload=resize();
-            const resize = () => {
-                const width = window.innerWidth;
-                const height = window.innerHeight;
+            document.addEventListener("DOMContentLoaded", () => {
                 let ele = document.querySelector(':root');
-                ele.style.setProperty('--width', window.innerHeight)
-            }
+                ele.style.setProperty('--width', window.innerHeight/800)
+            });            
 
             let currentEquation;
             let mem1 = document.getElementById("screen2").value;
