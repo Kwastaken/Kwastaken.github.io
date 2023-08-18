@@ -162,6 +162,7 @@
             document.addEventListener("DOMContentLoaded", () => {
                 let ele = document.querySelector(':root');
                 ele.style.setProperty('--width', window.innerHeight/800)
+                document.getElementById('screen2').value='0';
             });            
 
             let currentEquation;
@@ -180,11 +181,10 @@
             function onDecimal(){
                 if(decimalClicked==undefined){
                     decimalClicked=false;
-                    justDecimalClicked=false;
+                    justDecimalClicked=0;
                 }
-                if(decimalClicked==false){
+                if(decimalClicked==false||justDecimalClicked==0){
                     onClick();
-                    justDecimalClicked=true;
                 }
                 else{return;}
                 decimalClicked=true;
@@ -194,9 +194,11 @@
                 currentEquation = document.getElementById("screen2").value;
                 newEquation=currentEquation.substring(0,currentEquation.length-1);
                 document.getElementById("screen2").value=newEquation;
-                if(justDecimalClicked==true){
+                if(decimalClicked==true){
+                    justDecimalClicked-=1;
+                }
+                if(justDecimalClicked==0){
                     decimalClicked=false;
-                    justDecimalClicked=false;
                 }
             }
 
@@ -206,15 +208,18 @@
                    mem3=0;
                 }
 
-                if(isEqual==true&&subtractswitch==true){
+                if(isEqual==true){
                     onClear();
 
                 }
                 let num = event.target.id;
                 currentEquation = document.getElementById("screen2").value;
+                if (currentEquation=='0') {
+                    currentEquation='';
+                }
                document.getElementById("screen2").value = currentEquation + num ;
                operatorClicked=false;
-               justDecimalClicked=false;
+               justDecimalClicked+=1;
                
             }
             
@@ -267,12 +272,12 @@
                 else{
                     document.getElementById("screen1").value=mem2 +' '+ operatortype;
                 }
-                document.getElementById("screen2").value="";
+                document.getElementById("screen2").value="0";
                 operatortype2=operatortype;
                 subtractswitch=false;
                 operatorClicked=true;
                 decimalClicked=false;
-                justDecimalClicked=false;
+                justDecimalClicked=0;
             }
             function onEqual(){
                 mem1 = document.getElementById("screen2").value;
@@ -289,13 +294,13 @@
                         mem3=mem1;
                         result=mem2+mem1;
                         document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=result +' '+ operatortype;
+                        document.getElementById("screen1").value= mem2 +' '+ operatortype +' '+ mem1+' =';
                         subtractswitch=true;
                     }
                     else{
                         result=result+mem3;
                         document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=result +' '+ operatortype;
+                        document.getElementById("screen1").value=mem1 +' '+ operatortype +' '+ mem3+' =';
                     }
                 }
                 else if(operatortype=="-"){
@@ -303,13 +308,13 @@
                         mem3=mem1;
                         result=mem2-mem1;
                         document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=result +' '+ operatortype;
+                        document.getElementById("screen1").value=mem2 +' '+ operatortype +' '+ mem1+' =';
                         subtractswitch=true;
                     }
                     else{
                         result=result-mem3;
                         document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=result +' '+ operatortype;
+                        document.getElementById("screen1").value=mem1 +' '+ operatortype +' '+ mem3+' =';
                     }
                     
                 }
@@ -318,13 +323,13 @@
                         mem3=mem1;
                         result=mem2*mem1;
                         document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=result +' '+ operatortype;
+                        document.getElementById("screen1").value=mem2 +' '+ operatortype +' '+ mem1+' =';
                         subtractswitch=true;
                     }
                     else{
                         result=result*mem3;
                         document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=result +' '+ operatortype;
+                        document.getElementById("screen1").value=mem1 +' '+ operatortype +' '+ mem3+' =';
                     }
                     
                 }
@@ -333,32 +338,32 @@
                         mem3=mem1;
                         result=mem2/mem1;
                         document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=result +' '+ operatortype;
+                        document.getElementById("screen1").value=mem2 +' '+ operatortype +' '+ mem1+' =';
                         subtractswitch=true;
                     }
                     else{
                         result=result/mem3;
                         document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=result +' '+ operatortype;
+                        document.getElementById("screen1").value=mem1 +' '+ operatortype +' '+ mem3+' =';
                     }
                     
                 }
                 else{
-                    document.getElementById("screen2").value ="n";
+                    document.getElementById("screen2").value ="0";
                     subtractswitch=true;
                 }
                 isEqual=true;
                 operatorClicked=false;
                 decimalClicked=false;
-                justDecimalClicked=false;
+                justDecimalClicked=0;
             }
             function onClear(){
-                document.getElementById("screen2").value ="";
+                document.getElementById("screen2").value ="0";
                 document.getElementById("screen1").value="";
                 isEqual=false;
                 subtractswitch=false;
                 decimalClicked=false;
-                justDecimalClicked=false;
+                justDecimalClicked=0;
                 mem2=0;
             }
         </script>
