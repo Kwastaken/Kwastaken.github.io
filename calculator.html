@@ -155,13 +155,18 @@
                 </div>
             </div>
         <script>
-            window.addEventListener("resize", resize() );
-
+            window.addEventListener("resize", () => {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                let ele = document.querySelector(':root');
+                ele.style.setProperty('--width', window.innerHeight/800)
+            });
+            window.onload=resize();
             const resize = () => {
                 const width = window.innerWidth;
                 const height = window.innerHeight;
-                let ele = document.querySelector('.maincalculator');
-                ele.style.setProperty('--width', window.innerHeight/800)
+                let ele = document.querySelector(':root');
+                ele.style.setProperty('--width', window.innerHeight)
             }
 
             let currentEquation;
