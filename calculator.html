@@ -166,74 +166,76 @@
                     </button>
                 </div>
             </div>
-        <script>
-            window.addEventListener("resize", () => {
-                let ele = document.querySelector('.maincalculator');
-                ele.style.setProperty('--width', window.innerHeight/800)
-            });
-            document.addEventListener("DOMContentLoaded", () => {
-                let ele = document.querySelector(':root');
-                ele.style.setProperty('--width', window.innerHeight/800)
-                document.getElementById('screen2').value='0';
-            });            
+        <script>            
 
-            let currentEquation;
-            let mem1 = document.getElementById("screen2").value;
-            mem1 *= 1;
-            let mem2;
-            let mem3;
+            document.addEventListener("DOMContentLoaded", () => {
+                document.getElementById('screen2').value='0';
+            }); 
+            
+            let Num1 = document.getElementById("screen2").value;
+            Num1 *= 1;
+            let Num2;
+            let Num3;
+            let Op1storeAfter1stEqual;
             let operatortype;
             let operatortype2;
             let result;
             let isEqual;
-            let operatorClicked;
-            let decimalClicked;
-            let justDecimalClicked;
+            let isOperatorClicked;
+            let isDecimalClicked;
+            let sinceDecimalClicked;
+            let isAfter1stEqual;
+            
+            function round(num){               
+
+                
+                return Math.round(num*1000)/1000;
+            }
 
             function onDecimal(){
-                if(decimalClicked==undefined){
-                    decimalClicked=false;
-                    justDecimalClicked=0;
+                if(isDecimalClicked==undefined){
+                    isDecimalClicked=false;
+                    sinceDecimalClicked=0;
                 }
-                if(decimalClicked==false){
+                if(isDecimalClicked==false){
                     onClick();
-                    justDecimalClicked=1;
+                    sinceDecimalClicked=1;
                 }
                 else{return;}
-                decimalClicked=true;
+                isDecimalClicked=true;
             }
 
             function onDelete(){
-                currentEquation = document.getElementById("screen2").value;
-                newEquation=currentEquation.substring(0,currentEquation.length-1);
-                document.getElementById("screen2").value=newEquation;
-                if(decimalClicked==true){
-                    justDecimalClicked-=1;
+                Num1=document.getElementById('screen2').value;
+                Num1=Num1.substring(0,Num1.length-1);
+                document.getElementById("screen2").value=Num1;
+                if(isDecimalClicked==true){
+                    sinceDecimalClicked-=1;
                 }
-                if(justDecimalClicked==0){
-                    decimalClicked=false;
+                if(sinceDecimalClicked==0){
+                    isDecimalClicked=false;
                 }
             }
 
             function onClick(){
-                if (mem2==undefined) {
-                   mem2=0;
-                   mem3=0;
+                if (Num2==undefined) {
+                   Num2=0;
+                   Op1storeAfter1stEqual=0;
                 }
 
                 if(isEqual==true){
                     onClear();
 
                 }
-                let num = event.target.id;
-                currentEquation = document.getElementById("screen2").value;
-                if (currentEquation=='0'&&num!='.') {
-                    currentEquation='';
+                let buttonClicked = event.target.id;
+                Num1 = document.getElementById("screen2").value;
+                if (Num1=='0'&&buttonClicked!='.') {
+                    Num1='';
                 }
-               document.getElementById("screen2").value = currentEquation + num ;
-               operatorClicked=false;
-               if(decimalClicked==true){
-                    justDecimalClicked+=1;
+               document.getElementById("screen2").value = Num1 + buttonClicked ;
+               isOperatorClicked=false;
+               if(isDecimalClicked==true){
+                    sinceDecimalClicked+=1;
                 }
                
             }
@@ -243,143 +245,179 @@
                 
 
 
-                mem1 = document.getElementById("screen2").value;
-                mem1 *= 1;
+                Num1 = document.getElementById("screen2").value;
+                Num1 *= 1;
 
-                document.getElementById("screen1").value=mem2;
+                document.getElementById("screen1").value=Num3;
                 operatortype=event.target.id;
 
                 if (isEqual==undefined){
                     isEqual=false;
-                    operatorClicked=false;
+                    isOperatorClicked=false;
                 }
 
-                if (mem2==undefined) {
-                   mem2=0;
-                   mem3=0;
+                if (Num2==undefined) {
+                   Num2=0;
+                   Num3=0;
+                   Op1storeAfter1stEqual=0;
                 }
 
-                else if(isEqual==true){
-                    mem2=0;
+
+                if(Num2==0||isEqual==false){
+                    Num2=Num1;                 
+                    Num3=Num2;
+                    document.getElementById("screen1").value=round(Num3) +' '+ operatortype;
                     isEqual=false;
                 }
-
-                if(mem2==0){                    
-                    mem2=mem1;
-                    document.getElementById("screen1").value=mem2 +' '+ operatortype;
+                else if(Num2==0||isEqual==true){
+                    Num2=result;                 
+                    Num3=Num2;
+                    document.getElementById("screen1").value=round(Num3) +' '+ operatortype;
+                    isEqual=false;
                 }
-                else if(operatortype2=="+"&&operatorClicked==false){
-                    mem2=mem2+mem1;
-                    document.getElementById("screen1").value=mem2 +' '+ operatortype;
+                else if(operatortype2=="+"&&isOperatorClicked==false){
+                    
+                    Num2=Num2+Num1;                   
+                    Num3=Num2;
+                    document.getElementById("screen1").value=round(Num3) +' '+ operatortype;
                 }
-                else if(operatortype2=="-"&&operatorClicked==false){
-                    mem2=mem2-mem1;
-                    document.getElementById("screen1").value=mem2 +' '+ operatortype;
+                else if(operatortype2=="-"&&isOperatorClicked==false){
+                    
+                    Num2=Num2-Num1;
+                    Num3=Num2;
+                    document.getElementById("screen1").value=round(Num3) +' '+ operatortype;
                 }
-                else if(operatortype2=="*"&&operatorClicked==false){
-                    mem2=mem2*mem1;
-                    document.getElementById("screen1").value=mem2 +' '+ operatortype;
+                else if(operatortype2=="*"&&isOperatorClicked==false){
+                    Num2=Num2*Num1;
+                    Num3=Num2;
+                    document.getElementById("screen1").value=round(Num3) +' '+ operatortype;
                 }
-                else if(operatortype2=="/"&&operatorClicked==false){
-                    mem2=mem2/mem1;
-                    document.getElementById("screen1").value=mem2 +' '+ operatortype;
+                else if(operatortype2=="/"&&isOperatorClicked==false){
+                    
+                    Num2=Num2/Num1;
+                    Num3=Num2;
+                    document.getElementById("screen1").value=round(Num3) +' '+ operatortype;
                 }
                 else{
-                    document.getElementById("screen1").value=mem2 +' '+ operatortype;
+                    document.getElementById("screen1").value=round(Num3) +' '+ operatortype;
                 }
                 document.getElementById("screen2").value="0";
                 operatortype2=operatortype;
-                subtractswitch=false;
-                operatorClicked=true;
-                decimalClicked=false;
-                justDecimalClicked=0;
+                isAfter1stEqual=false;
+                isOperatorClicked=true;
+                isDecimalClicked=false;
+                sinceDecimalClicked=0;
             }
             function onEqual(){
-                mem1 = document.getElementById("screen2").value;
-                mem1 *= 1;
+                Num1 = document.getElementById("screen2").value;
+                Num1 *= 1;
 
                 document.getElementById("screen1").value="";
 
-                if(mem2==0){
-                    document.getElementById("screen2").value =mem1;
-                    document.getElementById("screen1").value=mem1 ;
+                if(Num2==0){
+                    document.getElementById("screen2").value =Num1;
+                    document.getElementById("screen1").value=Num1 ;
                 }
                 else if(operatortype=="+"){
-                    if (subtractswitch==false){
-                        mem3=mem1;
-                        result=mem2+mem1;
-                        document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value= mem2 +' '+ operatortype +' '+ mem1+' =';
-                        subtractswitch=true;
+                    if (isAfter1stEqual==false){
+                        Op1storeAfter1stEqual=Num1;
+                        
+                        result=Num2+Num1;
+                        Num3=result;
+                        document.getElementById("screen2").value = round(Num3);
+                        Num3=Num2;
+                        document.getElementById("screen1").value= round(Num3) +' '+ operatortype +' '+ round(Num1)+' =';
+                        isAfter1stEqual=true;
                     }
                     else{
-                        result=result+mem3;
-                        document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=mem1 +' '+ operatortype +' '+ mem3+' =';
+                        
+                        result=result+Op1storeAfter1stEqual;
+                        
+                       
+                        document.getElementById("screen2").value = round(result);
+                        document.getElementById("screen1").value=round(Num1) +' '+ operatortype +' '+ Op1storeAfter1stEqual+' =';
                     }
                 }
                 else if(operatortype=="-"){
-                    if (subtractswitch==false){
-                        mem3=mem1;
-                        result=mem2-mem1;
-                        document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=mem2 +' '+ operatortype +' '+ mem1+' =';
-                        subtractswitch=true;
+                    if (isAfter1stEqual==false){
+                        Op1storeAfter1stEqual=Num1;
+                        
+                        result=Num2-Num1;
+                        Num3=result;
+                        
+                        document.getElementById("screen2").value = round(Num3);
+                        Num3=Num2;
+                        document.getElementById("screen1").value= round(Num3) +' '+ operatortype +' '+ round(Num1)+' =';
+                        isAfter1stEqual=true;
                     }
                     else{
-                        result=result-mem3;
-                        document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=mem1 +' '+ operatortype +' '+ mem3+' =';
+                        
+                        result=result-Op1storeAfter1stEqual;
+                        
+                       
+                        document.getElementById("screen2").value = round(result);
+                        document.getElementById("screen1").value=round(Num1) +' '+ operatortype +' '+ Op1storeAfter1stEqual+' =';
                     }
                     
                 }
                 else if(operatortype=="*"){
-                    if (subtractswitch==false){
-                        mem3=mem1;
-                        result=mem2*mem1;
-                        document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=mem2 +' '+ operatortype +' '+ mem1+' =';
-                        subtractswitch=true;
+                    if (isAfter1stEqual==false){
+                        Op1storeAfter1stEqual=Num1;
+                        
+                        result=Num2*Num1;
+                        Num3=result;
+                        
+                        document.getElementById("screen2").value =round(Num3);
+                        Num3=Num2;
+                        document.getElementById("screen1").value= round(Num3) +' '+ operatortype +' '+ round(Num1)+' =';
+                        isAfter1stEqual=true;
                     }
                     else{
-                        result=result*mem3;
-                        document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=mem1 +' '+ operatortype +' '+ mem3+' =';
+                        result=result*Op1storeAfter1stEqual;
+                        
+                        document.getElementById("screen2").value = round(result);
+                        document.getElementById("screen1").value=round(Num1) +' '+ operatortype +' '+ Op1storeAfter1stEqual+' =';
                     }
                     
                 }
                 else if(operatortype=="/"){
-                    if (subtractswitch==false){
-                        mem3=mem1;
-                        result=mem2/mem1;
-                        document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=mem2 +' '+ operatortype +' '+ mem1+' =';
-                        subtractswitch=true;
+                    if (isAfter1stEqual==false){
+                        Op1storeAfter1stEqual=Num1;
+                        
+                        result=Num2/Num1;
+                        Num3=result;
+                        
+                        document.getElementById("screen2").value = round(Num3);
+                        Num3=Num2;
+                        document.getElementById("screen1").value= round(Num3) +' '+ operatortype +' '+ round(Num1)+' =';
+                        isAfter1stEqual=true;
                     }
                     else{
-                        result=result/mem3;
-                        document.getElementById("screen2").value = result;
-                        document.getElementById("screen1").value=mem1 +' '+ operatortype +' '+ mem3+' =';
+                        
+                        result=result/Op1storeAfter1stEqual;
+                        
+                        document.getElementById("screen2").value = round(result);
+                        document.getElementById("screen1").value=round(Num1) +' '+ operatortype +' '+ Op1storeAfter1stEqual+' =';
                     }
                     
                 }
                 else{
                     document.getElementById("screen2").value ="0";
-                    subtractswitch=true;
+                    isAfter1stEqual=true;
                 }
                 isEqual=true;
-                operatorClicked=false;
-                decimalClicked=false;
-                justDecimalClicked=0;
+                isOperatorClicked=false;
+                isDecimalClicked=false;
+                sinceDecimalClicked=0;
             }
             function onClear(){
                 document.getElementById("screen2").value ="0";
                 document.getElementById("screen1").value="";
                 isEqual=false;
-                subtractswitch=false;
-                decimalClicked=false;
-                justDecimalClicked=0;
-                mem2=0;
+                isAfter1stEqual=false;
+                isDecimalClicked=false;
+                sinceDecimalClicked=0;
+                Num2=0;
             }
         </script>
     </body>
