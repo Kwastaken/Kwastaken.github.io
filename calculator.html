@@ -19,22 +19,29 @@
                     top:50%;
                     left:50%;
                     height: 70%;
-                    max-width:calc(400px*var(--width));
-                    min-width: 80px;
+                    min-height: 200px;
+                    max-width:50vh;
+                    min-width: 142px;
                     transform:translate(-50%,-50%);
                     padding-top: 1vh;
                     padding-bottom: 1vh;
                     padding-left: 1vh;
                     padding-right: 1vh;
                 }
+                .screenbg{
+                    background: lightgray;
+                    height:20%;
+                    border: 2px inset;
+                    border-color: rgb(35, 35, 35);
+                }
                 #screen1{
                     position: relative;
                     display:flex;
-                    height:5%;
+                    height:25%;
                     width:100%;
                     font-size: 2vh;
-                    background: lightgray;
-                    border-bottom: 0 solid;
+                    background: none;
+                    border: 0 solid;
                     text-align: right;
                     padding-top: 2px;
                     padding-right: 1vh;
@@ -42,11 +49,11 @@
                 #screen2{
                     position: relative;
                     display:flex;
-                    height: 15%;
+                    height: 75%;
                     width:100%;
                     font-size: 4vh;
-                    background: lightgray;
-                    border-top: 0 solid;
+                    background: none;
+                    border: 0 solid;
                     text-align: right;
                 }
                 .row{
@@ -57,8 +64,8 @@
                     white-space: nowrap;
                     height: 15.6%;
                     width: 98%;
-                    padding-left: 0.5vh;
-                    padding-right: 0.5vh;
+                    padding-left: 0.25vh;
+                    padding-right: 0.25vh;
                 }
                 .number{
                     display:flex;
@@ -73,10 +80,10 @@
                     width: 50%;
                 }
                 #row1{
-                    padding-top: 0.5vh;
+                    padding-top: 0.25vh;
                 }
                 #row5{
-                    padding-bottom: 0.5vh;
+                    padding-bottom: 0.25vh;
                 }
              }
 
@@ -86,12 +93,14 @@
     </head>
     <body class="body">
             <div class="maincalculator" id="maincalculator">
+                <div class="screenbg">
                 <input type="string" class="screen" id="screen1">
 
                 </input>
                 <input type="string" class="screen" id="screen2">
 
                 </input>
+                </div>
                 <div class="row" id="row1">
                     <button class="number" id="c" onclick="onClear()">
                         C
@@ -186,8 +195,9 @@
                     decimalClicked=false;
                     justDecimalClicked=0;
                 }
-                if(decimalClicked==false||justDecimalClicked==0){
+                if(decimalClicked==false){
                     onClick();
+                    justDecimalClicked=1;
                 }
                 else{return;}
                 decimalClicked=true;
@@ -217,12 +227,14 @@
                 }
                 let num = event.target.id;
                 currentEquation = document.getElementById("screen2").value;
-                if (currentEquation=='0') {
+                if (currentEquation=='0'&&num!='.') {
                     currentEquation='';
                 }
                document.getElementById("screen2").value = currentEquation + num ;
                operatorClicked=false;
-               justDecimalClicked+=1;
+               if(decimalClicked==true){
+                    justDecimalClicked+=1;
+                }
                
             }
             
