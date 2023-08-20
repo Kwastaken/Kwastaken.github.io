@@ -176,20 +176,21 @@
             Num1 *= 1;
             let Num2;
             let Num3;
-            let Op1storeAfter1stEqual;
+            let Num1storeAfter1stEqual;
             let operatortype;
             let operatortype2;
             let result;
             let isEqual;
             let isOperatorClicked;
+            let isOperatorClickedThisEqual;
             let isDecimalClicked;
             let sinceDecimalClicked;
             let isAfter1stEqual;
             
-            function round(num){               
-
+            function round(num){
                 
                 return Math.round(num*1000)/1000;
+
             }
 
             function onDecimal(){
@@ -220,7 +221,7 @@
             function onClick(){
                 if (Num2==undefined) {
                    Num2=0;
-                   Op1storeAfter1stEqual=0;
+                   Num1storeAfter1stEqual=0;
                 }
 
                 if(isEqual==true){
@@ -259,11 +260,11 @@
                 if (Num2==undefined) {
                    Num2=0;
                    Num3=0;
-                   Op1storeAfter1stEqual=0;
+                   Num1storeAfter1stEqual=0;
                 }
 
 
-                if(Num2==0||isEqual==false){
+                if(Num2==0||isEqual==false&&isOperatorClickedThisEqual==false){
                     Num2=Num1;                 
                     Num3=Num2;
                     document.getElementById("screen1").value=round(Num3) +' '+ operatortype;
@@ -305,6 +306,7 @@
                 operatortype2=operatortype;
                 isAfter1stEqual=false;
                 isOperatorClicked=true;
+                isOperatorClickedThisEqual=true;
                 isDecimalClicked=false;
                 sinceDecimalClicked=0;
             }
@@ -320,7 +322,7 @@
                 }
                 else if(operatortype=="+"){
                     if (isAfter1stEqual==false){
-                        Op1storeAfter1stEqual=Num1;
+                        Num1storeAfter1stEqual=Num1;
                         
                         result=Num2+Num1;
                         Num3=result;
@@ -331,16 +333,16 @@
                     }
                     else{
                         
-                        result=result+Op1storeAfter1stEqual;
+                        result=result+Num1storeAfter1stEqual;
                         
                        
                         document.getElementById("screen2").value = round(result);
-                        document.getElementById("screen1").value=round(Num1) +' '+ operatortype +' '+ Op1storeAfter1stEqual+' =';
+                        document.getElementById("screen1").value=round(Num1) +' '+ operatortype +' '+ Num1storeAfter1stEqual+' =';
                     }
                 }
                 else if(operatortype=="-"){
                     if (isAfter1stEqual==false){
-                        Op1storeAfter1stEqual=Num1;
+                        Num1storeAfter1stEqual=Num1;
                         
                         result=Num2-Num1;
                         Num3=result;
@@ -352,17 +354,17 @@
                     }
                     else{
                         
-                        result=result-Op1storeAfter1stEqual;
+                        result=result-Num1storeAfter1stEqual;
                         
                        
                         document.getElementById("screen2").value = round(result);
-                        document.getElementById("screen1").value=round(Num1) +' '+ operatortype +' '+ Op1storeAfter1stEqual+' =';
+                        document.getElementById("screen1").value=round(Num1) +' '+ operatortype +' '+ Num1storeAfter1stEqual+' =';
                     }
                     
                 }
                 else if(operatortype=="*"){
                     if (isAfter1stEqual==false){
-                        Op1storeAfter1stEqual=Num1;
+                        Num1storeAfter1stEqual=Num1;
                         
                         result=Num2*Num1;
                         Num3=result;
@@ -373,16 +375,16 @@
                         isAfter1stEqual=true;
                     }
                     else{
-                        result=result*Op1storeAfter1stEqual;
+                        result=result*Num1storeAfter1stEqual;
                         
                         document.getElementById("screen2").value = round(result);
-                        document.getElementById("screen1").value=round(Num1) +' '+ operatortype +' '+ Op1storeAfter1stEqual+' =';
+                        document.getElementById("screen1").value=round(Num1) +' '+ operatortype +' '+ Num1storeAfter1stEqual+' =';
                     }
                     
                 }
                 else if(operatortype=="/"){
                     if (isAfter1stEqual==false){
-                        Op1storeAfter1stEqual=Num1;
+                        Num1storeAfter1stEqual=Num1;
                         
                         result=Num2/Num1;
                         Num3=result;
@@ -394,10 +396,10 @@
                     }
                     else{
                         
-                        result=result/Op1storeAfter1stEqual;
+                        result=result/Num1storeAfter1stEqual;
                         
                         document.getElementById("screen2").value = round(result);
-                        document.getElementById("screen1").value=round(Num1) +' '+ operatortype +' '+ Op1storeAfter1stEqual+' =';
+                        document.getElementById("screen1").value=round(Num1) +' '+ operatortype +' '+ Num1storeAfter1stEqual+' =';
                     }
                     
                 }
@@ -406,6 +408,7 @@
                     isAfter1stEqual=true;
                 }
                 isEqual=true;
+                isOperatorClickedThisEqual=false;
                 isOperatorClicked=false;
                 isDecimalClicked=false;
                 sinceDecimalClicked=0;
@@ -416,6 +419,7 @@
                 isEqual=false;
                 isAfter1stEqual=false;
                 isDecimalClicked=false;
+                isOperatorClickedThisEqual=false;
                 sinceDecimalClicked=0;
                 Num2=0;
             }
