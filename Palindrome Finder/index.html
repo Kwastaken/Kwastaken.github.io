@@ -9,29 +9,31 @@
 <body>
     <div id="title">PALINDROME DETECTOR</div>
     <div id="palindrome-container">
+    <input id="length" type="number" placeholder="Length" value="6">
     <input id="enter" type="string" >
     <button id="generate">Generate</button>
     </div>
     <div id="correct"></div>
     <div id="wrong"></div>
     <script>
+        let wordlength;
         let word;
         let letters='abcdefghijklmnopqrstuvwxyz';
         let root = document.querySelector(':root');
     const wordmaker = () =>{
-        for(let a=0; a<=100; a++ ){
+            wordlength=document.getElementById("length").value;
             word='';
-            for(let b=0; b<=5; b++){
+            for(let b=0; b<Math.ceil(wordlength/2); b++){
                 word=word+letters.charAt(Math.floor(Math.random()*letters.length));
+                
             }
-            if(palindromedetector()=='yes'){
             document.getElementById('enter').value=word;
-            return;
-        }
-        }
-        if(palindromedetector()=='no'){
-            wordmaker();
-        }
+            let righthalf='';
+            for(let a=Math.ceil(wordlength/2)-(wordlength%2); a>0; a--){
+                righthalf=righthalf+word.charAt(a-1);
+            }
+            word=word+righthalf;
+            document.getElementById('enter').value=word;
     }    
     function palindromedetector(){
     if(word.length==0){
@@ -39,8 +41,6 @@
         }
     for(let i=word.length-1; i>-1; i--){
         if (word.charAt(word.length-i-1)==word.charAt(i)){
-        }
-        else{
             return 'no';
         }
             }
@@ -65,6 +65,11 @@
     document.getElementById("generate").addEventListener("click",() => {
         wordmaker();
     })
+    document.getElementById("length").addEventListener("click",() => {
+        wordmaker();
+    })
+    document.querySelector("body").onload= wordmaker();
+    
         </script>
 </body>
 </html
