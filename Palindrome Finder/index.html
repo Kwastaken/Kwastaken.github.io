@@ -8,31 +8,63 @@
 </head>
 <body>
     <div id="title">PALINDROME DETECTOR</div>
+    <div id="palindrome-container">
     <input id="enter" type="string" >
+    <button id="generate">Generate</button>
+    </div>
     <div id="correct"></div>
     <div id="wrong"></div>
     <script>
-    function palindromedetector(){
-    let root = document.querySelector(':root');
-    let word=document.getElementById("enter").value;
-    if(word.length==0){
-            root.style.setProperty('--num1','transparent');
-            root.style.setProperty('--num2','transparent');
+        let word;
+        let letters='abcdefghijklmnopqrstuvwxyz';
+        let root = document.querySelector(':root');
+    const wordmaker = () =>{
+        for(let a=0; a<=100; a++ ){
+            word='';
+            for(let b=0; b<=5; b++){
+                word=word+letters.charAt(Math.floor(Math.random()*letters.length));
+            }
+            if(palindromedetector()=='yes'){
+            document.getElementById('enter').value=word;
             return;
+        }
+        }
+        if(palindromedetector()=='no'){
+            wordmaker();
+        }
+    }    
+    function palindromedetector(){
+    if(word.length==0){
+            return 0;
         }
     for(let i=word.length-1; i>-1; i--){
         if (word.charAt(word.length-i-1)==word.charAt(i)){
+        }
+        else{
+            return 'no';
+        }
+            }
+        return 'yes';
+        }
+    document.getElementById("enter").addEventListener("input",() => {
+        word=document.getElementById("enter").value;
+        if(palindromedetector()=='yes'){
             root.style.setProperty('--num1','green');
             root.style.setProperty('--num2','transparent');
         }
-        else{
+        else if(palindromedetector()=='no'){
             root.style.setProperty('--num2','red');
             root.style.setProperty('--num1','transparent');
-            return;
         }
-            }
+        else{
+            root.style.setProperty('--num1','transparent');
+            root.style.setProperty('--num2','transparent');
         }
-    document.getElementById("enter").addEventListener("input",() => {palindromedetector();});
+
+    });
+    document.getElementById("generate").addEventListener("click",() => {
+        wordmaker();
+    })
         </script>
 </body>
 </html
