@@ -1,6 +1,6 @@
         :root{
-         --num1:red;
-         --num2:green;
+         --num1:transparent;
+         --num2:transparent;
         }
         html,body{
             display:flex;
