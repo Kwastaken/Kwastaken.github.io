@@ -13,8 +13,8 @@
         }
         #title{
             position:relative;
-            font-size:200%;
-            height: 50px;
+            font-size:1.5rem;
+            height: 2rem;
         }
         #length{
             width: 35px;
@@ -30,7 +30,7 @@
             background-color: transparent;
             box-shadow: 3px 3px var(--num1);
             rotate:45deg;
-            translate: 73px 47px;
+            translate: 73px 1.8rem;
             
         }
         #wrong{
@@ -40,5 +40,5 @@
             background-color: var(--num2);
             rotate:45deg;
             clip-path: polygon(0% 40%, 40% 40%, 40% 0%, 60% 0%,60% 40%,100% 40%, 100% 60%, 60% 60%, 60% 100%, 40% 100%, 40% 60%, 0% 60%);
-            translate: 72px 54px;
+            translate: 72px 2.25rem;
         }
