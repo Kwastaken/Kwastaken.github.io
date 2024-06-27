@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css"> 
+    <title>Document</title>
+</head>
+<body>
+    <div id="gridcontainer">
+        <div id="square1" class="square" data-square="1">
+        
+        </div>
+        <div id="square2" class="square" data-square="2">
+        
+        </div>
+        <div id="square3" class="square" data-square="3">
+        
+        </div>
+        <div id="square4" class="square" data-square="4">
+        
+        </div>
+        <div id="square5" class="square" data-square="5">
+        
+        </div>
+        <div id="square6" class="square" data-square="6">
+        
+        </div>
+        <div id="square7" class="square" data-square="7">
+        
+        </div>
+        <div id="square8" class="square" data-square="8">
+        
+        </div>
+        <div id="square9" class="square" data-square="9">
+        
+        </div>
+    </div>
+    <button id="clear">Restart</button>
+    <button id="bot">Bot run</button>
+    <script>
+        let round=1;
+        let squareClicked=[];
+        let turn;
+        let color;
+        let gameOver=false;
+        let botEnabled=true;
+        let root = document.querySelector(':root');
+        const square = document.querySelectorAll("[data-square]");
+        square.forEach(el => el.addEventListener('click', event => { 
+          game();
+          //console.log('Div '+ event.target.getAttribute("data-square") +' was clicked!'); 
+        }));
+        document.querySelector('#clear').addEventListener('click',()=>{
+        //console.log('button clicked');
+        if(gameOver){clear();}});
+        document.querySelector('#bot').addEventListener('click',()=>{bot();});
+    function game(){
+        if(gameOver){
+            return;
+        }
+        else if(squareClicked.includes(event.target.getAttribute("data-square"))){
+            return;
+        }
+        if(round%2==1){
+            turn = "x";
+            color = "red";
+            squareClicked.push(event.target.getAttribute("data-square"));
+        }
+        else{turn = "o";
+        color = "blue";
+        squareClicked.push(event.target.getAttribute("data-square"));
+        }
+        root.style.setProperty("--"+turn+squareClicked.at(squareClicked.length-1),color);
+        botEnabled ? bot() : winning() ;
+        //console.log('ROUND '+round);
+    }
+    function clear(){
+        color = "transparent";
+        for(let i=1; i<round+1; i++){
+            if(i%2==0){
+            turn = "o";
+        }
+        else{
+            turn = "x";
+            }
+            root.style.setProperty("--"+turn+squareClicked.at(i-1),color);
+        }        
+        round=1;
+        squareClicked=[];
+        gameOver=false;
+      }
+    function winning(){
+        if(checkwin(squareClicked)=='X'){
+            setTimeout(() => { alert('X wins');}, 200);
+            gameOver=true;
+            return; 
+        }
+        else if(checkwin(squareClicked)=='O'){
+            setTimeout(() => { alert('O wins');}, 200);
+            gameOver=true;
+            return; 
+        }
+        else if(round==9){
+            setTimeout(() => { alert('TIED GAME');}, 200);
+            gameOver=true;
+            return; 
+        }
+        round+=1;
+      }
+    function checkwin(moveArray){
+        let moveArrayX=[];
+        let moveArrayO=[];
+        moveArray.forEach(el = (value,index)=>{index%2==0?moveArrayX.push(value):moveArrayO.push(value);});
+        //console.log('moveArray '+moveArray);
+        //console.log('moveArrayO '+moveArrayO);
+        //console.log('moveArrayX '+moveArrayX);*/
+
+        if(moveArrayX.includes('1')){
+            if(moveArrayX.includes('7')&&moveArrayX.includes('4')){
+            return 'X';
+            }
+            if(moveArrayX.includes('2')&&moveArrayX.includes('3')){
+            return 'X';
+            }
+         }
+         if(moveArrayX.includes('9')){
+            if(moveArrayX.includes('7')&&moveArrayX.includes('8')){
+            return 'X';
+            }
+            if(moveArrayX.includes('6')&&moveArrayX.includes('3')){
+            return 'X';
+            }
+         }
+         if(moveArrayX.includes('5')){
+            if(moveArrayX.includes('7')&&moveArrayX.includes('3')){
+            return 'X';
+            }
+            if(moveArrayX.includes('1')&&moveArrayX.includes('9')){
+            return 'X';
+            }
+            if(moveArrayX.includes('4')&&moveArrayX.includes('6')){
+            return 'X';
+            }
+            if(moveArrayX.includes('2')&&moveArrayX.includes('8')){
+            return 'X';
+            }
+         }
+         if(moveArrayO.includes('1')){
+            if(moveArrayO.includes('7')&&moveArrayO.includes('4')){
+            return 'O';
+            }
+            if(moveArrayO.includes('2')&&moveArrayO.includes('3')){
+            return 'O';
+            }
+         }
+         if(moveArrayO.includes('9')){
+            if(moveArrayO.includes('7')&&moveArrayO.includes('8')){
+            return 'O';
+            }
+            if(moveArrayO.includes('6')&&moveArrayO.includes('3')){
+            return 'O';
+            }
+         }
+         if(moveArrayO.includes('5')){
+            if(moveArrayO.includes('7')&&moveArrayO.includes('3')){
+            return 'O';
+            }
+            if(moveArrayO.includes('1')&&moveArrayO.includes('9')){
+            return 'O';
+            }
+            if(moveArrayO.includes('4')&&moveArrayO.includes('6')){
+            return 'O';
+            }
+            if(moveArrayO.includes('2')&&moveArrayO.includes('8')){
+            return 'O';
+            }
+         }
+         return "Next";
+      }
+    function bot(){
+        winning();
+        if(gameOver){
+            return;
+        }
+        //console.log('squareClicked '+ squareClicked);
+
+        let squaresAvail=['1','2','3','4','5','6','7','8','9'];
+        squaresAvail = squaresAvail.filter( ( el ) => !squareClicked.includes( el ) );
+        //console.log(squaresAvail);
+        //console.log('squareClicked '+ squareClicked);
+        let bestMove;
+        if(squareClicked.length<1){
+            bestMove='5';
+        }
+        else if(squareClicked.length==1){
+            squareClicked.at(0)==5?bestMove='1':bestMove='5';
+        }
+        else{
+            //console.log('squaresAvail.length'+ squaresAvail.length);
+            let squareRem=squaresAvail.slice();
+            for(let i=0; i<=squareRem.length; i++){
+                let projectedMove=squareClicked.slice();
+                projectedMove.push(squaresAvail.at(i));
+                //console.log('projectedMove' + projectedMove);
+                if(checkwin(projectedMove)=='O'){
+                    bestMove=projectedMove.at(squareClicked.length);
+                    //console.log('winsss');
+                    projectedMove.pop();
+                    break;
+                }
+                squareRem = squaresAvail.filter( ( el ) => !projectedMove.includes( el ) );
+                for(let i=0; i<=squareRem.length; i++){
+                projectedMove.push(squareRem.at(i));
+                //console.log('projectedMove' + projectedMove);
+                if(checkwin(projectedMove)=='X'){
+                    //console.log('xxxxxxx');
+                    bestMove=projectedMove.pop();
+                    break;
+                }
+                projectedMove.pop();
+            }
+            projectedMove.pop();
+            }
+        }
+        //console.log('best Move is '+bestMove);
+        if(bestMove==undefined){
+            squareClicked.length==3&&squareClicked.at(2)==9&&squareClicked.at(0)==5?bestMove='3':bestMove=squaresAvail.at(Math.floor(Math.random()*squaresAvail.length));
+        }
+        //console.log('best Move is '+bestMove);
+        //console.log('squareClicked '+ squareClicked);
+
+        squareClicked.push(bestMove);
+        setTimeout(() => {
+        turn = "o";
+        color = "blue";
+        //console.log('bot chose '+squareClicked.at(round-1));
+        root.style.setProperty("--"+turn+squareClicked.at(round-1),color);
+        winning();}, 150);
+        
+      }
+
+    </script>
+</body>
+</html>
