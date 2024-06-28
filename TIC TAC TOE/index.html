@@ -199,9 +199,10 @@
         else{
             //console.log('squaresAvail.length'+ squaresAvail.length);
             let squareRem=squaresAvail.slice();
+            let projectedMove=squareClicked.slice();
             for(let i=0; i<=squareRem.length; i++){
-                let projectedMove=squareClicked.slice();
-                projectedMove.push(squaresAvail.at(i));
+                squareRem = squaresAvail.filter( ( el ) => !projectedMove.includes( el ) );
+                projectedMove.push(squareRem.at(i));
                 //console.log('projectedMove' + projectedMove);
                 if(checkwin(projectedMove)=='O'){
                     bestMove=projectedMove.at(squareClicked.length);
@@ -222,13 +223,52 @@
             }
             projectedMove.pop();
             }
+            if(bestMove==undefined){
+                for(let i=0; i<=squareRem.length-1; i++){
+                squareRem = squaresAvail.filter( ( el ) => !projectedMove.includes( el ) );
+                projectedMove.push(squareRem.at(i));
+                //console.log('projectedMove' + projectedMove);
+                squareRem = squaresAvail.filter( ( el ) => !projectedMove.includes( el ) );
+                for(let i=0; i<=squareRem.length-1; i++){
+                projectedMove.push(squareRem.at(i));
+                //console.log('projectedMove' + projectedMove);
+                squareRem = squaresAvail.filter( ( el ) => !projectedMove.includes( el ) );
+                for(let i=0; i<=squareRem.length-1; i++){
+                projectedMove.push(squareRem.at(i));
+                //console.log('projectedMove' + projectedMove);
+                if(checkwin(projectedMove)=='O'){
+                    bestMove=projectedMove.at(squareClicked.length);
+                    console.log('winsss');
+                    projectedMove.pop();
+                    continue;
+                }
+                squareRem = squaresAvail.filter( ( el ) => !projectedMove.includes( el ) );
+                for(let i=0; i<=squareRem.length-1; i++){
+                projectedMove.push(squareRem.at(i));
+                console.log('projectedMove' + projectedMove);
+                if(checkwin(projectedMove)=='X'){
+                    console.log('xxxxxxx');
+                    bestMove=projectedMove.at(-3);
+                    projectedMove.pop();
+                    break;
+                }
+            projectedMove.pop();
+            }
+            projectedMove.pop();
+            }
+            projectedMove.pop();
+            }
+            projectedMove.pop();
+            }
         }
-        //console.log('best Move is '+bestMove);
+            }
+            
+        console.log('best Move is '+bestMove);
         if(bestMove==undefined){
             squareClicked.length==3&&squareClicked.at(2)==9&&squareClicked.at(0)==5?bestMove='3':bestMove=squaresAvail.at(Math.floor(Math.random()*squaresAvail.length));
         }
         //console.log('best Move is '+bestMove);
-        //console.log('squareClicked '+ squareClicked);
+        console.log('squareClicked '+ squareClicked);
 
         squareClicked.push(bestMove);
         setTimeout(() => {
