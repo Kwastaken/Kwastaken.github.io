@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memory Game</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="game-container">
+      <div id="1" class="square" data-1></div>
+      <div id="2" class="square" data-2></div>
+      <div id="3" class="square" data-3></div>
+      <div id="4" class="square" data-4></div>
+      <div id="5" class="square" data-5></div>
+      <div id="6" class="square" data-6></div>
+      <div id="7" class="square" data-7></div>
+      <div id="8" class="square" data-8></div>
+      <div id="9" class="square" data-9></div>
+      <div id="10" class="square" data-10></div>
+      <div id="11" class="square" data-11></div>
+      <div id="12" class="square" data-12></div>
+      <div id="13" class="square" data-13></div>
+      <div id="14" class="square" data-14></div>
+      <div id="15" class="square" data-15></div>
+      <div id="16" class="square" data-16></div>
+    </div>
+    <button>Restart</button>
+    <div id="turns" data-turns></div>
+    <script>
+      let square = document.querySelectorAll(".square");
+      let squareClicked;
+      let squareClickedPrev;
+      let colors = [];
+      let ids = [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+      ];
+      let turnCounter = 0;
+      let moveProg = false;
+      square.forEach((e) => {
+        e.addEventListener("click", () => {
+          squareClicked = e.id;
+          console.log("move in progress " + moveProg);
+          if (
+            squareClicked != squareClickedPrev &&
+            !moveProg &&
+            ids.includes(squareClicked)
+          ) {
+            game();
+          }
+        });
+      });
+      document.addEventListener("DOMContentLoaded", () => {
+        squareMaker();
+      });
+      document.querySelector("button").addEventListener("click", () => {
+        clear();
+      });
+      function squareMaker() {
+        let colorPalette = [
+          "red",
+          "blue",
+          "purple",
+          "green",
+          "orange",
+          "yellow",
+          "black",
+          "pink",
+        ];
+        colorPalette = colorPalette.concat(colorPalette);
+        for (let i = 0; i < 16; i++) {
+          let random = Math.round(Math.random() * (colorPalette.length - 1));
+          console.log("random= " + random);
+          colors.push(colorPalette[random]);
+          colorPalette.splice(random, 1);
+          console.log(colorPalette);
+        }
+        console.log(colors);
+      }
+      function game() {
+        moveProg = true;
+        let squareId = "[data-" + squareClicked + "]";
+        console.log("before" + squareClicked);
+        squareClicked *= 1;
+        squareClicked -= 1;
+        squareClickedPrev -= 1;
+        console.log(squareClicked);
+        document.querySelector(squareId).style.background =
+          colors[squareClicked];
+        turnCounter += 1;
+        console.log("turn" + turnCounter);
+        setTimeout(() => {
+          if (turnCounter % 2 == 0) {
+            if (colors[squareClickedPrev] !== colors[squareClicked]) {
+              for (let i = 0; i < ids.length; i++) {
+                console.log("run");
+                document.querySelector(`[data-${ids[i]}]`).style.background =
+                  "white";
+              }
+              squareClickedPrev = 0;
+            } else {
+              squareClicked += 1;
+              squareClickedPrev += 1;
+              console.log(ids);
+              ids = ids.filter((el) => squareClicked != el);
+              ids = ids.filter((el) => squareClickedPrev != el);
+              console.log(ids);
+            }
+          } else {
+            squareClickedPrev = squareClicked + 1;
+          }
+          moveProg = false;
+        }, 200);
+        document.querySelector("[data-turns]").innerHTML = turnCounter;
+      }
+      function clear() {
+        for (let i = 0; i < 16; i++) {
+          console.log("run");
+          document.querySelector(`[data-${i + 1}]`).style.background = "white";
+        }
+        turnCounter = 0;
+        colors = [];
+        squareClicked = undefined;
+        squareClickedPrev = undefined;
+        ids = [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+        ];
+        document.querySelector("[data-turns]").innerHTML = turnCounter;
+        squareMaker();
+      }
+    </script>
+  </body>
+</html>
