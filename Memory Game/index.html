@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <!--<button id="testbutton">Test</button>-->
+    <div id="popup-bg"></div>
+    <div id="header">Memory Game</div>
     <div id="game-container">
       <div id="1" class="square" data-1></div>
       <div id="2" class="square" data-2></div>
@@ -25,8 +28,14 @@
       <div id="15" class="square" data-15></div>
       <div id="16" class="square" data-16></div>
     </div>
-    <button>Restart</button>
-    <div id="turns" data-turns></div>
+    <div id="tester"></div>
+    <div id="move-count" class="turns">0</div>
+    <div class="popup" id="game-end">
+      <button id="close-game-end">X</button>
+      <div id="turns" class="turns">0</div>
+      <button class="restart">Restart</button>
+    </div>
+    <button class="restart" id="reset">&#x21BA;</button>
     <script>
       let square = document.querySelectorAll(".square");
       let squareClicked;
@@ -50,12 +59,23 @@
         "15",
         "16",
       ];
+      let colorPalette = [
+        "red",
+        "blue",
+        "purple",
+        "green",
+        "orange",
+        "yellow",
+        "black",
+        "pink",
+      ];
       let turnCounter = 0;
       let moveProg = false;
+      let movePlayed = [];
       square.forEach((e) => {
         e.addEventListener("click", () => {
           squareClicked = e.id;
-          console.log("move in progress " + moveProg);
+          //console.log("move in progress " + moveProg);
           if (
             squareClicked != squareClickedPrev &&
             !moveProg &&
@@ -68,11 +88,41 @@
       document.addEventListener("DOMContentLoaded", () => {
         squareMaker();
       });
-      document.querySelector("button").addEventListener("click", () => {
-        clear();
+      document.querySelectorAll(".restart").forEach((e) => {
+        e.addEventListener("click", () => {
+          clear();
+          closePopup();
+        });
       });
+      document.querySelector("#testbutton").addEventListener("click", () => {});
+      document
+        .querySelector("#close-game-end")
+        .addEventListener("click", () => {
+          document.querySelector("#game-end").style.opacity = "0%";
+          document.querySelector("#game-end").style.zIndex = -1;
+          document.querySelector("#move-count").style.opacity = "100%";
+        });
+      function closePopup() {
+        document.querySelector("#game-end").style.opacity = "0%";
+        document.querySelector("#game-end").style.zIndex = -1;
+        document.querySelector("#popup-bg").style.opacity = "0%";
+        document.querySelector("#popup-bg").style.zIndex = -1;
+        document.querySelector("#move-count").style.opacity = "100%";
+        document.querySelector("#reset").style.opacity = "0%";
+        document.querySelector("#reset").style.zIndex = -1;
+      }
+      function openPopup() {
+        document.querySelector("#game-end").style.opacity = "100%";
+        document.querySelector("#game-end").style.zIndex = 2;
+        document.querySelector("#popup-bg").style.opacity = "100%";
+        document.querySelector("#popup-bg").style.zIndex = 1;
+        document.querySelector("#turns").innerHTML = turnCounter;
+        document.querySelector("#move-count").style.opacity = "0%";
+        document.querySelector("#reset").style.opacity = "90%";
+        document.querySelector("#reset").style.zIndex = 1;
+      }
       function squareMaker() {
-        let colorPalette = [
+        colorPalette = [
           "red",
           "blue",
           "purple",
@@ -85,30 +135,30 @@
         colorPalette = colorPalette.concat(colorPalette);
         for (let i = 0; i < 16; i++) {
           let random = Math.round(Math.random() * (colorPalette.length - 1));
-          console.log("random= " + random);
+          //console.log("random= " + random);
           colors.push(colorPalette[random]);
           colorPalette.splice(random, 1);
-          console.log(colorPalette);
+          //console.log(colorPalette);
         }
-        console.log(colors);
+        //console.log(colors);
       }
       function game() {
         moveProg = true;
         let squareId = "[data-" + squareClicked + "]";
-        console.log("before" + squareClicked);
+        //console.log("before" + squareClicked);
         squareClicked *= 1;
         squareClicked -= 1;
         squareClickedPrev -= 1;
-        console.log(squareClicked);
+        //console.log(squareClicked);
         document.querySelector(squareId).style.background =
           colors[squareClicked];
         turnCounter += 1;
-        console.log("turn" + turnCounter);
+        //console.log("turn" + turnCounter);
         setTimeout(() => {
           if (turnCounter % 2 == 0) {
             if (colors[squareClickedPrev] !== colors[squareClicked]) {
               for (let i = 0; i < ids.length; i++) {
-                console.log("run");
+                //console.log("run");
                 document.querySelector(`[data-${ids[i]}]`).style.background =
                   "white";
               }
@@ -116,21 +166,63 @@
             } else {
               squareClicked += 1;
               squareClickedPrev += 1;
-              console.log(ids);
+              //console.log(ids);
               ids = ids.filter((el) => squareClicked != el);
               ids = ids.filter((el) => squareClickedPrev != el);
-              console.log(ids);
+              //console.log(ids);
             }
           } else {
             squareClickedPrev = squareClicked + 1;
           }
+          setTimeout(() => {
+            if (ids.length === 0) {
+              openPopup();
+              perfectGame(movePlayed);
+            }
+          }, 300);
           moveProg = false;
         }, 200);
-        document.querySelector("[data-turns]").innerHTML = turnCounter;
+        document.querySelector("#move-count").innerHTML = turnCounter;
+        movePlayed.push(colors[squareClicked]);
+      }
+      function perfectGame(movePlayed) {
+        colorPalette = [
+          "red",
+          "blue",
+          "purple",
+          "green",
+          "orange",
+          "yellow",
+          "black",
+          "pink",
+        ];
+        //console.log("colorPalette " + colorPalette);
+        for (let i = 0; i < colorPalette.length; i++) {
+          let colorPosition = movePlayed.findIndex((e) => e == colorPalette[i]);
+          //console.log("loop ran " + movePlayed[colorPosition]);
+          if (movePlayed[colorPosition] == movePlayed[colorPosition + 1]) {
+            //console.log("lucky consecutive");
+          } else {
+            movePlayed.splice(colorPosition, 1);
+            //console.log(movePlayed);
+            let colorPosition2 = movePlayed.findIndex(
+              (e) => e == colorPalette[i]
+            );
+            (colorPosition2 + 1) % 2 == 1
+              ? (turnCounter -= 2)
+              : (turnCounter -= 1);
+            movePlayed.splice(colorPosition, 0, colorPalette[i]);
+            //console.log(movePlayed);
+          }
+        }
+        //console.log(turnCounter);
+        //console.log(movePlayed);
+        turnCounter = Math.round((16 / turnCounter) * 100, 2);
+        document.querySelector("#turns").innerHTML = turnCounter + "%";
       }
       function clear() {
         for (let i = 0; i < 16; i++) {
-          console.log("run");
+          //console.log("run");
           document.querySelector(`[data-${i + 1}]`).style.background = "white";
         }
         turnCounter = 0;
@@ -155,7 +247,8 @@
           "15",
           "16",
         ];
-        document.querySelector("[data-turns]").innerHTML = turnCounter;
+        movePlayed = [];
+        document.querySelector("#move-count").innerHTML = turnCounter;
         squareMaker();
       }
     </script>
