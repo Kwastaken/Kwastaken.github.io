@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      let row = 6;
+      let col = 7;
+      let move = 0;
+      let yellow = [];
+      let red = [];
+      let colFilled = [5, 5, 5, 5, 5, 5, 5];
+      for (let i = 1; i <= row * col; i++) {
+        let divCreator = document.createElement("div");
+        let position = [((i - 1) % row) * 72, Math.floor((i - 1) / row) * 72];
+        window.scrollTo(position[1], position[0]);
+        divCreator.style.width = "70px";
+        divCreator.style.height = "70px";
+        divCreator.style.position = "absolute";
+        divCreator.style.top = position[0] + "px";
+        divCreator.style.left = position[1] + "px";
+        divCreator.style.background = "rgb(30,30,180)";
+        divCreator.style.borderRadius = "50%";
+        divCreator.style.display = "flex";
+        divCreator.style.alignItems = "center";
+        divCreator.style.justifyContent = "center";
+        divCreator.id = `${(i - 1) % row}${Math.floor((i - 1) / row)}`;
+        /*divCreator.innerHTML = `${
+          ((i - 1) % row) * 10 + Math.floor((i - 1) / row)
+        }`;*/
+        document.body.appendChild(divCreator);
+      }
+      let div = document.querySelectorAll("div");
+
+      div.forEach((e) => {
+        e.addEventListener("click", () => {
+          let id = e.id;
+          if (colFilled[id.charAt(1)] == -1) {
+            return;
+          }
+          id = colFilled[id.charAt(1)] + id.charAt(1);
+          //console.log(id);
+          colFilled.splice(id.charAt(1), 1, colFilled[id.charAt(1)] - 1);
+          //console.log(colFilled);
+          game(id);
+        });
+      });
+      function game(id) {
+        if (move % 2 == 1) {
+          document.getElementById(id).style.background = "yellow";
+          yellow.push(id);
+          if (winChecker(yellow) == "w") {
+            setTimeout(() => {
+              alert("Yellow winner");
+            }, 50);
+          }
+        } else {
+          document.getElementById(id).style.background = "red";
+          red.push(id);
+          if (winChecker(red) == "w") {
+            setTimeout(() => {
+              alert("Red winner");
+            }, 50);
+          }
+        }
+        console.log(red);
+        console.log(yellow);
+        move++;
+        if (move == 42) {
+          setTimeout(() => {
+            alert("Draw game");
+          }, 50);
+        }
+      }
+      function winChecker(moves) {
+        let inARow = 0;
+        //THIS IS ROW CHECKER
+        for (let i = 5; i >= 0; i--) {
+          inARow = 0;
+          for (let x = 0; x <= 6; x++) {
+            if (moves.includes(`${i}${x}`)) {
+              inARow++;
+            } else {
+              inARow = 0;
+            }
+            if (inARow == 4) {
+              return "w";
+            }
+          }
+        }
+        //THIS IS COLUMN CHECKER
+        for (let x = 0; x <= 6; x++) {
+          inARow = 0;
+          for (let i = 5; i >= 0; i--) {
+            if (moves.includes(`${i}${x}`)) {
+              inARow++;
+            } else {
+              inARow = 0;
+            }
+            if (inARow == 4) {
+              return "w";
+            }
+          }
+        }
+        //THIS IS NE DIAGONAL UPPER
+        for (let x = 5; x >= 3; x--) {
+          inARow = 0;
+          for (let i = x; i >= 0; i--) {
+            if (moves.includes(`${i}${x - i}`)) {
+              inARow++;
+            } else {
+              inARow = 0;
+            }
+            if (inARow == 4) {
+              return "w";
+            }
+          }
+        }
+        //THIS IS NE DIAGONAL LOWER
+        for (let x = 1; x <= 3; x++) {
+          inARow = 0;
+          for (let i = x; i <= 6; i++) {
+            if (moves.includes(`${5 + x - i}${i}`)) {
+              inARow++;
+            } else {
+              inARow = 0;
+            }
+            if (inARow == 4) {
+              return "w";
+            }
+          }
+        }
+        //THIS IS SE DIAGONAL LOWER
+        for (let x = 0; x <= 2; x++) {
+          inARow = 0;
+          for (let i = x; i <= 5; i++) {
+            if (moves.includes(`${i}${i - x}`)) {
+              inARow++;
+            } else {
+              inARow = 0;
+            }
+            if (inARow == 4) {
+              return "w";
+            }
+          }
+        }
+        //THIS IS SE DIAGONAL UPPER
+        for (let x = 1; x <= 3; x++) {
+          inARow = 0;
+          for (let i = x; i <= 6; i++) {
+            if (moves.includes(`${i - x}${i}`)) {
+              inARow++;
+            } else {
+              inARow = 0;
+            }
+            if (inARow == 4) {
+              return "w";
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
