@@ -30,7 +30,7 @@
         divCreator.style.justifyContent = "center";
         divCreator.id = `${(i - 1) % row}${Math.floor((i - 1) / row)}`;
         /*divCreator.innerHTML = `${
-          ((i - 1) % row) * 10 + Math.floor((i - 1) / row)
+          (((i - 1) % row) * 10 + Math.floor((i - 1) / row)) % 11
         }`;*/
         document.body.appendChild(divCreator);
       }
@@ -39,21 +39,22 @@
       div.forEach((e) => {
         e.addEventListener("click", () => {
           let id = e.id;
-          if (colFilled[id.charAt(1)] == -1) {
-            return;
-          }
-          id = colFilled[id.charAt(1)] + id.charAt(1);
-          //console.log(id);
-          colFilled.splice(id.charAt(1), 1, colFilled[id.charAt(1)] - 1);
-          //console.log(colFilled);
           game(id);
         });
       });
       function game(id) {
+        console.log(id);
+        if (colFilled[id.charAt(1)] == -1) {
+          return;
+        }
+        id = colFilled[id.charAt(1)] + id.charAt(1);
+        //console.log(id);
+        colFilled.splice(id.charAt(1), 1, colFilled[id.charAt(1)] - 1);
+        console.log(colFilled);
         if (move % 2 == 1) {
           document.getElementById(id).style.background = "yellow";
           yellow.push(id);
-          if (winChecker(yellow) == "w") {
+          if (winChecker(yellow, id) == "w") {
             setTimeout(() => {
               alert("Yellow winner");
             }, 50);
@@ -61,41 +62,50 @@
         } else {
           document.getElementById(id).style.background = "red";
           red.push(id);
-          if (winChecker(red) == "w") {
+          if (winChecker(red, id) == "w") {
             setTimeout(() => {
               alert("Red winner");
             }, 50);
           }
         }
-        console.log(red);
-        console.log(yellow);
+        //console.log(red);
+        //console.log(yellow);
         move++;
+        while (move % 2 == 1) {
+          game(bot());
+        }
         if (move == 42) {
           setTimeout(() => {
             alert("Draw game");
           }, 50);
         }
       }
-      function winChecker(moves) {
+      function winChecker(moves, id) {
         let inARow = 0;
-        //THIS IS ROW CHECKER
-        for (let i = 5; i >= 0; i--) {
-          inARow = 0;
-          for (let x = 0; x <= 6; x++) {
-            if (moves.includes(`${i}${x}`)) {
-              inARow++;
-            } else {
-              inARow = 0;
-            }
-            if (inARow == 4) {
-              return "w";
-            }
+        let i;
+        let x;
+        if (move < 6) {
+          console.log("return");
+          return;
+        }
+        //THIS IS ROW
+        inARow = 0;
+        i = id.charAt(0);
+        for (x = 0; x <= 6; x++) {
+          if (moves.includes(`${i}${x}`)) {
+            inARow++;
+          } else {
+            inARow = 0;
+          }
+          if (inARow == 4) {
+            return "w";
           }
         }
-        //THIS IS COLUMN CHECKER
-        for (let x = 0; x <= 6; x++) {
+        //THIS IS COLUMN
+        if (id.charAt(0) <= 2) {
           inARow = 0;
-          for (let i = 5; i >= 0; i--) {
+          x = id.charAt(1);
+          for (i = id.charAt(0); i <= id.charAt(0) + 3; i++) {
             if (moves.includes(`${i}${x}`)) {
               inARow++;
             } else {
@@ -107,7 +117,8 @@
           }
         }
         //THIS IS NE DIAGONAL UPPER
-        for (let x = 5; x >= 3; x--) {
+        if (id % 9 == 3 || id % 9 == 4 || id % 9 == 5) {
+          x = id % 11;
           inARow = 0;
           for (let i = x; i >= 0; i--) {
             if (moves.includes(`${i}${x - i}`)) {
@@ -121,7 +132,8 @@
           }
         }
         //THIS IS NE DIAGONAL LOWER
-        for (let x = 1; x <= 3; x++) {
+        if (id % 9 == 6 || id % 9 == 7 || id % 9 == 8) {
+          x = (id % 9) - 5;
           inARow = 0;
           for (let i = x; i <= 6; i++) {
             if (moves.includes(`${5 + x - i}${i}`)) {
@@ -135,9 +147,10 @@
           }
         }
         //THIS IS SE DIAGONAL LOWER
-        for (let x = 0; x <= 2; x++) {
+        if (id % 11 == 0 || id % 11 == 10 || id % 11 == 9) {
+          x = (11 - (id % 11)) % 11;
           inARow = 0;
-          for (let i = x; i <= 5; i++) {
+          for (i = x; i <= 5; i++) {
             if (moves.includes(`${i}${i - x}`)) {
               inARow++;
             } else {
@@ -149,7 +162,8 @@
           }
         }
         //THIS IS SE DIAGONAL UPPER
-        for (let x = 1; x <= 3; x++) {
+        if (id % 11 == 1 || id % 11 == 2 || id % 11 == 3) {
+          x = id % 11;
           inARow = 0;
           for (let i = x; i <= 6; i++) {
             if (moves.includes(`${i - x}${i}`)) {
@@ -162,6 +176,9 @@
             }
           }
         }
+      }
+      function bot() {
+        return `${50 + Math.floor(Math.random() * 7)}`;
       }
     </script>
   </body>
