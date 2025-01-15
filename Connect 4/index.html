@@ -238,6 +238,13 @@
       }
       //For automatic play
       function bot() {
+        if (move <= 1) {
+          if (red.includes("53")) {
+            return "52";
+          } else {
+            return "53";
+          }
+        }
         for (let b = 0; b <= 6; b++) {
           yellow.push(`${colFilled[b] - 1}${b}`);
           if (winChecker(yellow, `${colFilled[b] - 1}${b}`) == "w") {
