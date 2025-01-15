@@ -1,3 +1,40 @@
 .class{
     background: rgb(18, 20, 100);
 }
+body{
+    display: flex;
+    align-items: bottom;
+    justify-content: center;
+}
+#game-container{
+    background: darkblue;
+    position: absolute;
+    margin: auto;
+    display: flex;
+    height: 506px;
+    width: 506px;
+}
+
+.cell{
+    background: rgb(30,30,180);
+    width: 70px;
+    height: 70px;
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#top{
+    top:2px;
+    left:2px;
+    background-color: transparent;
+}
+.button{
+    position: absolute;
+    top: 506px;
+}
+#clear{
+    translate:-100% 50%;
+}
+#bot{translate:100% 50%;}
