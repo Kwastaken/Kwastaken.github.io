@@ -23,23 +23,26 @@
       let red = [];
       let colFilled = [6, 6, 6, 6, 6, 6, 6];
       //Create game on load
-      for (let i = 1; i <= row * col; i++) {
-        let divCreator = document.createElement("div");
-        let position = [
-          ((i - 1) % row) * 72 + 74,
-          Math.floor((i - 1) / row) * 72 + 2,
-        ];
-        window.scrollTo(position[1], position[0]);
-        divCreator.style.top = position[0] + "px";
-        divCreator.style.left = position[1] + "px";
-        divCreator.classList.add("cell");
-        divCreator.setAttribute("data-cell", 3);
-        divCreator.id = `${(i - 1) % row}${Math.floor((i - 1) / row)}`;
-        /*divCreator.innerHTML = `${
+      document.addEventListener("DOMContentLoaded", () => {
+        for (let i = 1; i <= row * col; i++) {
+          let divCreator = document.createElement("div");
+          let position = [
+            ((i - 1) % row) * 72 + 74,
+            Math.floor((i - 1) / row) * 72 + 2,
+          ];
+          window.scrollTo(position[1], position[0]);
+          divCreator.style.top = position[0] + "px";
+          divCreator.style.left = position[1] + "px";
+          divCreator.classList.add("cell");
+          divCreator.setAttribute("data-cell", 3);
+          divCreator.id = `${(i - 1) % row}${Math.floor((i - 1) / row)}`;
+          /*divCreator.innerHTML = `${
           (((i - 1) % row) * 10 + Math.floor((i - 1) / row)) % 11
         }`;*/
-        document.querySelector("#game-container").appendChild(divCreator);
-      }
+          document.querySelector("#game-container").appendChild(divCreator);
+        }
+      });
+
       //Handle the movement of the thingy at the top
       /*function topColor() {
         document.querySelector("#top").style.background =
