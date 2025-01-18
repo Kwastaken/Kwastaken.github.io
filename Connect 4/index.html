@@ -90,6 +90,7 @@
           document.getElementById(id).style.background = "yellow";
           yellow.push(id);
           if (winChecker(yellow, id) == "w") {
+            move++;
             setTimeout(() => {
               alert("Yellow winner");
             }, 50);
