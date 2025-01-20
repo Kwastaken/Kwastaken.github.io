@@ -1,6 +1,4 @@
-.class{
-    background: rgb(18, 20, 100);
-}
+
 body{
     display: flex;
     align-items: bottom;
@@ -14,7 +12,14 @@ body{
     height: 506px;
     width: 506px;
 }
-
+.col{
+    background:pink;
+    height: 506px;
+    width: 72px;
+}
+#c1,#c7{
+    width: 73px;
+}
 .cell{
     background: rgb(30,30,180);
     width: 70px;

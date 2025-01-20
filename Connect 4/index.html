@@ -16,16 +16,23 @@
     </div>
 
     <script>
-      let row = 6;
-      let col = 7;
       let move = 0;
       let yellow = [];
       let red = [];
       let colFilled = [6, 6, 6, 6, 6, 6, 6];
       //Create game on load
       document.addEventListener("DOMContentLoaded", () => {
-        alert("boo");
-        for (let i = 1; i <= row * col; i++) {
+        for (let i = 1; i <= 7; i++) {
+          let divCreator = document.createElement("div");
+          divCreator.classList.add("col");
+          divCreator.setAttribute("data-col", "col");
+          divCreator.id = `c${i}`;
+          /*divCreator.innerHTML = `${
+          (((i - 1) % row) * 10 + Math.floor((i - 1) / row)) % 11
+        }`;*/
+          document.querySelector("#game-container").appendChild(divCreator);
+        }
+        for (let i = 1; i <= 6 * 7; i++) {
           let divCreator = document.createElement("div");
           let cellSpacing =
             (Number(
@@ -37,20 +44,20 @@
               7 +
             2;
           let position = [
-            ((i - 1) % row) * cellSpacing + cellSpacing + 2,
-            Math.floor((i - 1) / row) * cellSpacing + 2,
+            ((i - 1) % 6) * cellSpacing + cellSpacing + 2,
+            Math.floor((i - 1) / 6) * cellSpacing + 2,
           ];
-          window.scrollTo(position[1], position[0]);
           divCreator.style.top = position[0] + "px";
           divCreator.style.left = position[1] + "px";
           divCreator.classList.add("cell");
           divCreator.setAttribute("data-cell", "cell");
-          divCreator.id = `${(i - 1) % row}${Math.floor((i - 1) / row)}`;
+          divCreator.id = `${(i - 1) % 6}${Math.floor((i - 1) / 6)}`;
           /*divCreator.innerHTML = `${
-          (((i - 1) % row) * 10 + Math.floor((i - 1) / row)) % 11
+          (((i - 1) % 6) * 10 + Math.floor((i - 1) / 6)) % 11
         }`;*/
           document.querySelector("#game-container").appendChild(divCreator);
         }
+        console.log(document.querySelectorAll(".col"));
       });
 
       //Handle the movement of the thingy at the top
@@ -108,7 +115,7 @@
           return;
         }
         id = `${colFilled[id.charAt(1)] - 1}${id.charAt(1)}`;
-        //console.log("id " + id);
+        console.log("id " + id);
         colFilled.splice(id.charAt(1), 1, colFilled[id.charAt(1)] - 1);
         //console.log(colFilled);
         if (move % 2 == 1) {
