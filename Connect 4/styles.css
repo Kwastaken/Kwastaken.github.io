@@ -7,7 +7,7 @@ body{
     justify-content: center;
 }
 #game-container{
-    background: PINK;
+    background: darkblue;
     position: absolute;
     margin: auto;
     display: flex;
