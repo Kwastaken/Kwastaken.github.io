@@ -27,8 +27,8 @@ body{
 }
 #top{
     top:2px;
-    left:2px;
-    background-color: transparent;
+    left:218px;
+    background-color: red;
 }
 .button{
     position: absolute;
@@ -38,3 +38,63 @@ body{
     translate:-100% 50%;
 }
 #bot{translate:100% 50%;}
+
+@media (max-width:430px){
+    #game-container{
+        height: 401px;
+        width: 401px;
+    }
+    
+    .cell{
+        width: 55px;
+        height: 55px;
+}
+.button{
+    position: absolute;
+    top: 401px;
+}
+#top{
+    background: red;
+    left:173px;
+}
+}
+@media (max-width:391px){
+    #game-container{
+        height: 359px;
+        width: 359px;
+        
+    }
+    
+    .cell{
+        width: 49px;
+        height: 49px;
+    }
+    .button{
+        position: absolute;
+        top: 359px;
+    }
+    #top{
+        background: red;
+        left: 155px;
+    }
+}
+@media (max-width:345px){
+    #game-container{
+        height: 317px;
+        width: 317px;
+        
+    }
+    
+    .cell{
+        width: 43px;
+        height: 43px;
+    }
+    .button{
+        position: absolute;
+        top: 317px;
+    }
+    #top{
+        background: red;
+        left:137px;
+    }
+}
