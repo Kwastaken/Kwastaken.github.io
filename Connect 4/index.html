@@ -25,7 +25,13 @@
           type="radio"
           id="yellow"
           name="botColor"
-          checked
+          checked /></label
+      ><label
+        >Loser gets red<input
+          class="form"
+          type="radio"
+          id="loserGetsRed"
+          name="botColor"
       /></label>
     </form>
     <script>
@@ -102,7 +108,6 @@
       document.querySelector("#game-container").addEventListener(
         "touchstart",
         (e) => {
-          console.log(e);
           document
             .querySelector("#game-container")
             .removeEventListener("mousemove", startVisual);
@@ -116,7 +121,6 @@
       document.querySelectorAll(".col").forEach((e) => {
         e.addEventListener("click", () => {
           let id = e.id;
-          console.log("oo");
           game(id);
         });
       });
@@ -144,6 +148,9 @@
           red.push(id);
           if (winChecker(red, id) == "w") {
             move++;
+            if (document.querySelector("#loserGetsRed").checked) {
+              botYellow == 1 ? (botYellow = 0) : (botYellow = 1);
+            }
             setTimeout(() => {
               alert("Red winner");
             }, 50);
@@ -356,8 +363,10 @@
           game(bot());
         }
       });
-      document.querySelectorAll(".form").forEach((e) => {
+      //Apply settings to game instantly upon changing
+      document.querySelectorAll(".form:not(#loserGetsRed)").forEach((e) => {
         e.addEventListener("change", () => {
+          console.log("hhg");
           botYellow = document.querySelector("#yellow").checked ? 1 : 0;
           if (
             move % 2 == botYellow &&
