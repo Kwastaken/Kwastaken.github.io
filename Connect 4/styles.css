@@ -44,7 +44,13 @@ body{background-color: rgb(207, 207, 207);
         height: 401px;
         width: 401px;
     }
-    
+    .col{
+        height: 401px;
+        width: 57px;
+    }
+    #c1,#c7{
+        width: 58px;
+    }  
     .cell{
         width: 55px;
         height: 55px;
@@ -60,7 +66,13 @@ body{background-color: rgb(207, 207, 207);
         width: 359px;
         
     }
-    
+    .col{
+        height: 359px;
+        width: 51px;
+    }
+    #c1,#c7{
+        width: 52px;
+    }  
     .cell{
         width: 49px;
         height: 49px;
@@ -76,7 +88,13 @@ body{background-color: rgb(207, 207, 207);
         width: 317px;
         
     }
-    
+    .col{
+        height: 317px;
+        width: 45px;
+    }
+    #c1,#c7{
+        width: 46px;
+    }  
     .cell{
         width: 43px;
         height: 43px;
