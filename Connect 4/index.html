@@ -359,7 +359,10 @@
       document.querySelectorAll(".form").forEach((e) => {
         e.addEventListener("change", () => {
           botYellow = document.querySelector("#yellow").checked ? 1 : 0;
-          if (move % 2 == botYellow) {
+          if (
+            move % 2 == botYellow &&
+            document.querySelector("#botToggle").checked
+          ) {
             botYellow == 0 ? game(bot(red, yellow)) : game(bot(yellow, red));
           }
         });
