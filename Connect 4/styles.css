@@ -1,21 +1,23 @@
 
-body{
+body{background-color: rgb(207, 207, 207);
     display: flex;
-    align-items: bottom;
-    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
+
 #game-container{
     background: darkblue;
-    position: absolute;
+    position: relative;
     margin: auto;
     display: flex;
     height: 506px;
     width: 506px;
 }
 .col{
-    background:pink;
+    background:transparent;
     height: 506px;
     width: 72px;
+    z-index: 3;
 }
 #c1,#c7{
     width: 73px;
@@ -36,13 +38,10 @@ body{
     background-color: red;
 }
 .button{
-    position: absolute;
-    top: 506px;
+    position: relative;
+    width:fit-content;
+    /*top: 506px;*/
 }
-#clear{
-    translate:-100% 50%;
-}
-#bot{translate:100% 50%;}
 
 @media (max-width:430px){
     #game-container{

@@ -4,61 +4,74 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
-    <title>Document</title>
+    <title>Connect 4</title>
   </head>
   <body>
+    <h1 id="title">CONNECT 4</h1>
     <div id="game-container">
       <div class="cell" id="top"></div>
     </div>
     <button id="clear" class="button">Clear</button>
-    <div class="button" id="bot">
-      <label>Enable Bot</label><input type="checkbox" id="botToggle" />
-    </div>
-
+    <form>
+      <label
+        >Enable Bot<input class="form" type="checkbox" id="botToggle"
+      /></label>
+      <label
+        >Red<input class="form" type="radio" id="red" name="botColor"
+      /></label>
+      <label
+        >Yellow<input
+          class="form"
+          type="radio"
+          id="yellow"
+          name="botColor"
+          checked
+      /></label>
+    </form>
     <script>
       let move = 0;
       let yellow = [];
       let red = [];
       let colFilled = [6, 6, 6, 6, 6, 6, 6];
+      let botYellow = document.querySelector("#yellow").checked ? 1 : 0;
       //Create game on load
-      document.addEventListener("DOMContentLoaded", () => {
-        for (let i = 1; i <= 7; i++) {
-          let divCreator = document.createElement("div");
-          divCreator.classList.add("col");
-          divCreator.setAttribute("data-col", "col");
-          divCreator.id = `c${i}`;
-          /*divCreator.innerHTML = `${
+      //document.addEventListener("DOMContentLoaded", () => {
+      for (let i = 0; i <= 6; i++) {
+        let divCreator = document.createElement("div");
+        divCreator.classList.add("col");
+        divCreator.setAttribute("data-col", "col");
+        divCreator.id = `c${i}`;
+        /*divCreator.innerHTML = `${
           (((i - 1) % row) * 10 + Math.floor((i - 1) / row)) % 11
         }`;*/
-          document.querySelector("#game-container").appendChild(divCreator);
-        }
-        for (let i = 1; i <= 6 * 7; i++) {
-          let divCreator = document.createElement("div");
-          let cellSpacing =
-            (Number(
-              getComputedStyle(
-                document.querySelector("#game-container")
-              ).width.slice(0, 3)
-            ) -
-              16) /
-              7 +
-            2;
-          let position = [
-            ((i - 1) % 6) * cellSpacing + cellSpacing + 2,
-            Math.floor((i - 1) / 6) * cellSpacing + 2,
-          ];
-          divCreator.style.top = position[0] + "px";
-          divCreator.style.left = position[1] + "px";
-          divCreator.classList.add("cell");
-          divCreator.setAttribute("data-cell", "cell");
-          divCreator.id = `${(i - 1) % 6}${Math.floor((i - 1) / 6)}`;
-          /*divCreator.innerHTML = `${
+        document.querySelector("#game-container").appendChild(divCreator);
+      }
+      for (let i = 1; i <= 6 * 7; i++) {
+        let divCreator = document.createElement("div");
+        let cellSpacing =
+          (Number(
+            getComputedStyle(
+              document.querySelector("#game-container")
+            ).width.slice(0, 3)
+          ) -
+            16) /
+            7 +
+          2;
+        let position = [
+          ((i - 1) % 6) * cellSpacing + cellSpacing + 2,
+          Math.floor((i - 1) / 6) * cellSpacing + 2,
+        ];
+        divCreator.style.top = position[0] + "px";
+        divCreator.style.left = position[1] + "px";
+        divCreator.classList.add("cell");
+        divCreator.setAttribute("data-cell", "cell");
+        divCreator.id = `${(i - 1) % 6}${Math.floor((i - 1) / 6)}`;
+        /*divCreator.innerHTML = `${
           (((i - 1) % 6) * 10 + Math.floor((i - 1) / 6)) % 11
         }`;*/
-          document.querySelector("#game-container").appendChild(divCreator);
-        }
-        console.log(document.querySelectorAll(".col"));
-      });
+        document.querySelector("#game-container").appendChild(divCreator);
+      }
+      //});
 
       //Handle the movement of the thingy at the top
       document.querySelector("#game-container").addEventListener(
@@ -100,13 +113,11 @@
         { once: true }
       );
       //Runs game on click
-      document.querySelectorAll(".cell").forEach((e) => {
+      document.querySelectorAll(".col").forEach((e) => {
         e.addEventListener("click", () => {
           let id = e.id;
           console.log("oo");
           game(id);
-          document.querySelector("#top").style.background =
-            move % 2 == 1 ? "yellow" : "red";
         });
       });
       //Processes cell clicked and handles winner
@@ -115,7 +126,7 @@
           return;
         }
         id = `${colFilled[id.charAt(1)] - 1}${id.charAt(1)}`;
-        console.log("id " + id);
+        //console.log("id " + id);
         colFilled.splice(id.charAt(1), 1, colFilled[id.charAt(1)] - 1);
         //console.log(colFilled);
         if (move % 2 == 1) {
@@ -142,9 +153,11 @@
         //console.log(red);
         //console.log(yellow);
         move++;
+        document.querySelector("#top").style.background =
+          move % 2 == 1 ? "yellow" : "red";
         if (document.querySelector("#botToggle").checked) {
-          while (move % 2 == 1) {
-            game(bot());
+          if (move % 2 == botYellow) {
+            botYellow == 0 ? game(bot(red, yellow)) : game(bot(yellow, red));
           }
         }
         if (move == 42) {
@@ -270,7 +283,7 @@
         return "c";
       }
       //For automatic play
-      function bot() {
+      function bot(me, oppo) {
         if (move <= 1) {
           if (red.includes("53")) {
             return "52";
@@ -279,22 +292,22 @@
           }
         }
         for (let b = 0; b <= 6; b++) {
-          yellow.push(`${colFilled[b] - 1}${b}`);
-          if (winChecker(yellow, `${colFilled[b] - 1}${b}`) == "w") {
-            //console.log("yellow win");
-            yellow.pop();
+          me.push(`${colFilled[b] - 1}${b}`);
+          if (winChecker(me, `${colFilled[b] - 1}${b}`) == "w") {
+            //console.log("me win");
+            me.pop();
             return `${colFilled[b] - 1}${b}`;
           }
-          yellow.pop();
+          me.pop();
         }
         for (let b = 0; b <= 6; b++) {
-          red.push(`${colFilled[b] - 1}${b}`);
-          if (winChecker(red, `${colFilled[b] - 1}${b}`) == "w") {
-            //console.log("blocked red");
-            red.pop();
+          oppo.push(`${colFilled[b] - 1}${b}`);
+          if (winChecker(oppo, `${colFilled[b] - 1}${b}`) == "w") {
+            //console.log("blocked oppo");
+            oppo.pop();
             return `${colFilled[b] - 1}${b}`;
           }
-          red.pop();
+          oppo.pop();
         }
         let losingMoves = [];
         let x;
@@ -309,20 +322,20 @@
               Math.pow(x - 0.5, 3) * 50 + (x - 0.5) * -5.5 + 3.5
             )}`;
           }
-          red.push(`${colFilled[x] - 2}${x}`);
-          if (winChecker(red, `${colFilled[x] - 2}${x}`) == "c") {
+          oppo.push(`${colFilled[x] - 2}${x}`);
+          if (winChecker(oppo, `${colFilled[x] - 2}${x}`) == "c") {
             //console.log("random but no lose");
-            red.pop();
+            oppo.pop();
             return `${colFilled[x] - 1}${x}`;
           }
           losingMoves.push(x);
-          red.pop();
+          oppo.pop();
         }
         //console.log("losing either way");
         return `${colFilled[x] - 1}${x}`;
       }
       //Clears board
-      document.querySelector("#clear").addEventListener("click", () => {
+      document.querySelector("#clear").addEventListener("click", (e) => {
         red.forEach((e) => {
           document.getElementById(e).style.background = "rgb(30, 30, 180)";
         });
@@ -338,6 +351,17 @@
         });
         yellow.forEach((e) => {
           document.getElementById(e).style.background = "yellow";
+        });
+        if (botYellow == 0 && document.querySelector("#botToggle").checked) {
+          game(bot());
+        }
+      });
+      document.querySelectorAll(".form").forEach((e) => {
+        e.addEventListener("change", () => {
+          botYellow = document.querySelector("#yellow").checked ? 1 : 0;
+          if (move % 2 == botYellow) {
+            botYellow == 0 ? game(bot(red, yellow)) : game(bot(yellow, red));
+          }
         });
       });
     </script>
