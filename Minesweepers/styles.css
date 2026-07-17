@@ -279,7 +279,7 @@ h1, h2{
     background: #161647;
     width: var(--width);
     height:var(--height);
-
+    touch-action:none;
 }
 
 .flag::after{

@@ -240,7 +240,7 @@
           });
           let prevBoxAt = document.querySelector("#cover");
           e.addEventListener("touchstart", (e) => {
-            e.preventDefault();
+            //e.preventDefault();
             prevBoxAt = document.elementFromPoint(
               e.touches[0].clientX,
               e.touches[0].clientY,
@@ -248,7 +248,7 @@
             prevBoxAt.classList.add("mineBoxTouch");
           });
           e.addEventListener("touchmove", (e) => {
-            e.preventDefault();
+            //e.preventDefault();
             //mineBox.includes(e) ? console.log("a") : null;
             let boxAt = document.elementFromPoint(
               e.touches[0].clientX,
@@ -267,7 +267,7 @@
             }
           });
           e.addEventListener("touchend", (e) => {
-            e.preventDefault();
+            //e.preventDefault();
             prevBoxAt.classList.remove("mineBoxTouch");
           });
         });
@@ -293,18 +293,14 @@
         });
         document.querySelector("#mines").innerText = flag;
         //Clear button
-        document.querySelector("#clear").addEventListener("click", () => {
-          clear();
-        });
+        document.querySelector("#clear").addEventListener("click", clear);
         const info = () => {
-          console.log("trigger");
           document.querySelector("#htp").classList.remove("invis");
           setTimeout(() => {
             document.addEventListener(
               "click",
               () => {
                 document.querySelector("#htp").classList.add("invis");
-                console.log("click");
                 document
                   .querySelector("#info")
                   .addEventListener("click", info, { once: true });
