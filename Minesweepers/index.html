@@ -114,13 +114,13 @@
         //On load
         if (mines.includes(Number(e.dataset.coords))) {
           e.dataset.numbers = -1;
-          e.innerText = -1;
+          //e.innerText = -1;
         }
         if (e.dataset.numbers != -1) {
           let tempLoop = getAdjEnt(e.dataset.coords).filter((e) =>
             mines.includes(e),
           );
-          e.innerText = tempLoop.length;
+          //e.innerText = tempLoop.length;
           e.dataset.numbers = tempLoop.length;
         }
       }
