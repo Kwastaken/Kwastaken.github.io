@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Minesweepers</title>
+  </head>
+  <body>
+    <h1>Minesweepers</h1>
+    <div id="container" class="container">
+      <div id="info">i</div>
+      <div id="htp" class="invis">
+        <h2>How to play</h2>
+        <ol>
+          <li>The goal is to uncover all squares without exploding a mine</li>
+          <li>The amount of mines is shown by the flag</li>
+          <li>
+            Select the flag to mark potential mines(you have a limited amount)
+          </li>
+          <li>Select the shovel to uncover squares</li>
+        </ol>
+        <p>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Good luck 😉</p>
+      </div>
+      <div id="game-container" class="container"></div>
+      <div id="flag" class="tools flag" data-tool="flag">
+        <div id="mines" class=""></div>
+      </div>
+      <div id="shovel" class="tools" data-tool="shovel"></div>
+    </div>
+    <input id="clear" class="invis" type="button" value="You win" />
+    <div id="cover" class="invis"></div>
+
+    <script>
+      let shovel = true;
+      let flag = 10;
+      let row = 10;
+      let col = 10;
+      let blanksC = [];
+      let mines = [];
+      document.documentElement.style.setProperty("--col", col);
+
+      function getAdjEnt(cond) {
+        let crd = cond * 1;
+        let tempLoop = [crd - 10, crd + 10];
+        if (cond.at(-1) == 1) {
+          tempLoop.push(crd + 1, crd - 9, crd + 11);
+        } else if (cond.at(-1) == 0) {
+          tempLoop.push(crd - 1, crd + 9, crd - 11);
+        } else {
+          tempLoop.push(crd + 1, crd - 9, crd + 11, crd - 1, crd + 9, crd - 11);
+        }
+        return tempLoop;
+      }
+      function mineMaker(num, limit, temp) {
+        temp = new Set(getAdjEnt(num));
+        temp.add(Number(num));
+        console.log(temp);
+        while (temp.size < limit + getAdjEnt(num).length + 1) {
+          temp.add(Math.floor(Math.random() * 100) + 1);
+        }
+        getAdjEnt(num).forEach((e) => {
+          temp.delete(e);
+        });
+        temp.delete(Number(num));
+        mines = Array.from(temp);
+        mines.sort((a, b) => a - b);
+      }
+      function boxColor(e) {
+        switch (e.dataset.numbers) {
+          case "-1":
+            e.style.background = "#FFBB00";
+            e.style.borderColor = "#FFBB00";
+            break;
+          case "0":
+            e.style.background = "#FF6600";
+            e.style.borderColor = "#FF6600";
+            break;
+          case "1":
+            e.style.background = "#0000CC";
+            e.style.borderColor = "#0000CC";
+            break;
+          case "2":
+            e.style.background = "#330099";
+            e.style.borderColor = "#330099";
+            break;
+          case "3":
+            e.style.background = "#660066";
+            e.style.borderColor = "#660066";
+            break;
+          case "4":
+            e.style.background = "#990033";
+            e.style.borderColor = "#990033";
+            break;
+          case "5":
+            e.style.background = "#CC0000";
+            e.style.borderColor = "#CC0000";
+            break;
+          case "6":
+            e.style.background = "#00CCCC";
+            e.style.borderColor = "#00CCCC";
+            break;
+          case "7":
+            e.style.background = "#00CC99";
+            e.style.borderColor = "#00CC99";
+            break;
+          case "8":
+            e.style.background = "#00CC66";
+            e.style.borderColor = "#00CC66";
+            break;
+        }
+      }
+      function boxNumbers(e) {
+        //On load
+        if (mines.includes(Number(e.dataset.coords))) {
+          e.dataset.numbers = -1;
+          e.innerText = -1;
+        }
+        if (e.dataset.numbers != -1) {
+          let tempLoop = getAdjEnt(e.dataset.coords).filter((e) =>
+            mines.includes(e),
+          );
+          e.innerText = tempLoop.length;
+          e.dataset.numbers = tempLoop.length;
+        }
+      }
+      function game(e) {
+        if (
+          blanksC.includes(e.target.dataset.coords) ||
+          (shovel && e.target.dataset.flag == 1)
+        ) {
+          return;
+        }
+
+        if (!shovel && !blanksC.includes(e.target.dataset.coords)) {
+          if (e.target.dataset.flag == 0 && flag > 0) {
+            //e.target.style.background = "red";
+            //e.target.style.borderColor = "red";
+            e.target.classList.add("flag");
+            e.target.dataset.flag = 1;
+            flag--;
+            document.querySelector("#mines").innerText = flag;
+          } else if (e.target.dataset.flag == 1) {
+            //boxColor(e.target);
+            //e.target.style.background = "#000065";
+            //e.target.style.borderColor = "#000065";
+            e.target.classList.remove("flag");
+            e.target.dataset.flag = 0;
+            flag++;
+            document.querySelector("#mines").innerText = flag;
+          }
+          return;
+        }
+        if (e.target.dataset.numbers == -1 && e.target.dataset.flag == 0) {
+          e.target.classList.add("explode");
+          document.querySelector("#cover").classList.remove("invis");
+          document.querySelector("#clear").classList.remove("invis");
+          document.querySelector("#clear").value = "LOSE";
+
+          return;
+        }
+        let blanksTBC = [e.target.dataset.coords];
+        while (blanksTBC.length > 0) {
+          if (document.querySelector("#c" + blanksTBC[0]).dataset.flag == 1) {
+            blanksTBC.shift();
+            continue;
+          }
+          if (document.querySelector("#c" + blanksTBC[0]).dataset.numbers > 0) {
+            document.querySelector("#c" + blanksTBC[0]).classList.add("dug");
+            document.querySelector("#c" + blanksTBC[0]).innerText =
+              document.querySelector("#c" + blanksTBC[0]).dataset.numbers;
+            blanksC.push(blanksTBC[0]);
+            blanksTBC.shift();
+            continue;
+          }
+          let tempLoop = getAdjEnt(blanksTBC[0]);
+          tempLoop.forEach((e) => {
+            if (
+              !blanksTBC.includes(e.toString()) &&
+              !blanksC.includes(e.toString()) &&
+              e > 0 &&
+              e < 101
+            ) {
+              blanksTBC.push(e.toString());
+            }
+          });
+          document.querySelector("#c" + blanksTBC[0]).classList.add("dug");
+
+          blanksC.push(blanksTBC[0]);
+          blanksTBC.shift();
+        }
+      }
+      function clear() {
+        let mineBox = document.querySelectorAll(".mineBox");
+        mines.forEach((e) => {
+          document.querySelector("#c" + e).dataset.numbers = 0;
+          document.querySelector("#c" + e).classList.remove("explode");
+          //document.querySelector("#c" + e).innerText = 0;
+        });
+        blanksC = [];
+        mines = [];
+        flag = Math.floor(Math.random() * 5) + 10;
+        mineBox.forEach((e) => {
+          e.dataset.flag = 0;
+          e.classList.remove("flag");
+          e.classList.remove("dug");
+          e.innerText = "";
+        });
+
+        document.querySelector("#mines").innerText = flag;
+        document.querySelector("#cover").classList.add("invis");
+        document.querySelector("#clear").classList.add("invis");
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        // on load fill container
+        if (window.innerWidth / window.innerHeight < 0.795) {
+          document.documentElement.style.setProperty("--width", "7.71vmin");
+          document.documentElement.style.setProperty("--height", "7.71vmin");
+        } else {
+          document.documentElement.style.setProperty("--width", "5.2vmin");
+          document.documentElement.style.setProperty("--height", "5.2vmin");
+        }
+        for (let i = 1; i <= row * col; i++) {
+          let divCreator = document.createElement("div");
+          divCreator.style.position = "relative";
+          divCreator.className = "mineBox";
+          divCreator.id = "c" + i;
+          divCreator.dataset.coords = i;
+          divCreator.dataset.flag = 0;
+          divCreator.dataset.numbers = 0;
+          document.querySelector("#game-container").appendChild(divCreator);
+        }
+        //on load game container
+        let mineBox = document.querySelectorAll(".mineBox");
+        mineBox.forEach((e) => {
+          //boxColor(e);
+          e.addEventListener("click", (e) => {
+            if (blanksC.length == 0) {
+              mineMaker(e.target.dataset.coords, flag);
+              for (let i = 1; i <= row * col; i++) {
+                boxNumbers(document.querySelector("#c" + i));
+              }
+            }
+            game(e);
+            if (blanksC.length == 100 - mines.length) {
+              document.querySelector("#cover").classList.remove("invis");
+              document.querySelector("#clear").classList.remove("invis");
+              document.querySelector("#clear").value = "WIN";
+            }
+          });
+        });
+        //on load game tools
+        let tools = document.querySelectorAll(".tools");
+        tools.forEach((e) => {
+          e.addEventListener("click", (e) => {
+            if (e.target.dataset.tool != "shovel") {
+              shovel = false;
+              document.querySelector('[data-tool="flag"]').style.borderStyle =
+                "ridge";
+              document.querySelector('[data-tool="shovel"]').style.borderStyle =
+                "solid";
+            } else {
+              shovel = true;
+              document.querySelector('[data-tool="shovel"]').style.borderStyle =
+                "ridge";
+              document.querySelector('[data-tool="flag"]').style.borderStyle =
+                "solid";
+            }
+            //console.log(shovel);
+          });
+        });
+        document.querySelector("#mines").innerText = flag;
+        //Clear button
+        document.querySelector("#clear").addEventListener("click", () => {
+          clear();
+        });
+        const info = () => {
+          console.log("trigger");
+          document.querySelector("#htp").classList.remove("invis");
+          setTimeout(() => {
+            document.addEventListener(
+              "click",
+              () => {
+                document.querySelector("#htp").classList.add("invis");
+                console.log("click");
+                document
+                  .querySelector("#info")
+                  .addEventListener("click", info, { once: true });
+              },
+              { once: true },
+            );
+          }, 0.1);
+        };
+        document
+          .querySelector("#info")
+          .addEventListener("click", info, { once: true });
+        window.addEventListener("resize", () => {
+          if (window.innerWidth / window.innerHeight < 0.795) {
+            document.documentElement.style.setProperty("--width", "7.71vmin");
+            document.documentElement.style.setProperty("--height", "7.71vmin");
+          } else {
+            document.documentElement.style.setProperty("--width", "5.2vmin");
+            document.documentElement.style.setProperty("--height", "5.2vmin");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
