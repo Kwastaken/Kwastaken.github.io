@@ -215,8 +215,9 @@ h1, h2{
     background-color: transparent;
     position: absolute;
     display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    grid-template-rows: auto;  
+    grid-auto-flow: column;
+    grid-template-rows: repeat(10, 1fr);
+    grid-template-columns: auto;  
     left:50%;
     translate: -50% 4%;
 }
@@ -280,9 +281,6 @@ h1, h2{
     height:var(--height);
 
 }
-.mineBox:hover{
-    border-style:groove;
-}
 
 .flag::after{
     position: absolute;
@@ -306,6 +304,14 @@ h1, h2{
 .invis{
     display:none;
 }
+@media(hover:hover){
+.mineBox:hover{
+    border-style:groove;
+}
+}
+.mineBoxTouch{
+    border-style:groove;
+}
 #cover{
     position: absolute;
     top:0%;
@@ -316,3 +322,44 @@ h1, h2{
     background-color: #0000ff;
     z-index: 3;
 }
+
+.colorm{
+  background: #FFBB00;
+  border-color: #FFBB00;
+}   
+.color0{            
+  background: #FF6600;
+  border-color: #FF6600;
+}
+.color1{               
+  background: #0000CC;
+  border-color: #0000CC;
+}
+.color2{               
+  background: #330099;
+  border-color: #330099;
+}
+.color3{               
+  background: #660066;
+  border-color: #660066;
+}
+.color4{               
+  background: #990033;
+  border-color: #990033;
+}
+.color5{               
+  background: #CC0000;
+  border-color: #CC0000;
+}
+.color6{               
+  background: #00CCCC;
+  border-color: #00CCCC;
+}
+.color7{               
+  background: #00CC99;
+  border-color: #00CC99;
+}
+.color8{               
+  background: #00CC66;
+  border-color: #00CC66;
+}   

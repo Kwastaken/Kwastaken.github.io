@@ -55,7 +55,6 @@
       function mineMaker(num, limit, temp) {
         temp = new Set(getAdjEnt(num));
         temp.add(Number(num));
-        console.log(temp);
         while (temp.size < limit + getAdjEnt(num).length + 1) {
           temp.add(Math.floor(Math.random() * 100) + 1);
         }
@@ -69,44 +68,34 @@
       function boxColor(e) {
         switch (e.dataset.numbers) {
           case "-1":
-            e.style.background = "#FFBB00";
-            e.style.borderColor = "#FFBB00";
+            e.classList.toggle("colorm");
             break;
           case "0":
-            e.style.background = "#FF6600";
-            e.style.borderColor = "#FF6600";
+            e.classList.toggle("color0");
             break;
           case "1":
-            e.style.background = "#0000CC";
-            e.style.borderColor = "#0000CC";
+            e.classList.toggle("color1");
             break;
           case "2":
-            e.style.background = "#330099";
-            e.style.borderColor = "#330099";
+            e.classList.toggle("color2");
             break;
           case "3":
-            e.style.background = "#660066";
-            e.style.borderColor = "#660066";
+            e.classList.toggle("color3");
             break;
           case "4":
-            e.style.background = "#990033";
-            e.style.borderColor = "#990033";
+            e.classList.toggle("color4");
             break;
           case "5":
-            e.style.background = "#CC0000";
-            e.style.borderColor = "#CC0000";
+            e.classList.toggle("color5");
             break;
           case "6":
-            e.style.background = "#00CCCC";
-            e.style.borderColor = "#00CCCC";
+            e.classList.toggle("color6");
             break;
           case "7":
-            e.style.background = "#00CC99";
-            e.style.borderColor = "#00CC99";
+            e.classList.toggle("color7");
             break;
           case "8":
-            e.style.background = "#00CC66";
-            e.style.borderColor = "#00CC66";
+            e.classList.toggle("color8");
             break;
         }
       }
@@ -248,6 +237,35 @@
               document.querySelector("#clear").classList.remove("invis");
               document.querySelector("#clear").value = "WIN";
             }
+          });
+          let prevBoxAt = document.querySelector("#cover");
+          e.addEventListener("touchstart", (e) => {
+            prevBoxAt = document.elementFromPoint(
+              e.touches[0].clientX,
+              e.touches[0].clientY,
+            );
+            prevBoxAt.classList.add("mineBoxTouch");
+          });
+          e.addEventListener("touchmove", (e) => {
+            //mineBox.includes(e) ? console.log("a") : null;
+            let boxAt = document.elementFromPoint(
+              e.touches[0].clientX,
+              e.touches[0].clientY,
+            );
+            if (
+              boxAt.parentElement != document.getElementById("game-container")
+            ) {
+              prevBoxAt.classList.toggle("mineBoxTouch");
+              prevBoxAt = document.querySelector("#cover");
+              return;
+            } else if (prevBoxAt.id != boxAt.id) {
+              boxAt.classList.toggle("mineBoxTouch");
+              prevBoxAt.classList.toggle("mineBoxTouch");
+              prevBoxAt = boxAt;
+            }
+          });
+          e.addEventListener("touchend", (e) => {
+            prevBoxAt.classList.remove("mineBoxTouch");
           });
         });
         //on load game tools
