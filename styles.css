@@ -1,0 +1,318 @@
+
+:root{
+    --width:5.2vmin;
+    --height:5.2vmin;
+}
+
+@media(min-aspect-ratio: 7.95/10){
+
+    h1, h2{
+    font-size: 4.167vmin;
+    margin-bottom: 0.26vmin;
+    margin-top: 0.651vmin;
+}
+h2{
+    font-size:3.125vmin;
+}
+#info{
+    font-size: 2.083vmin;
+    height: 0.8em;
+    border: 0.13vmin solid grey;
+    right: 0px;
+}
+#htp{
+    border: 0.651vmin groove #141414;
+    padding-right: 1em;
+    top: 0%;
+    margin:2.6vmin;
+}
+#container{
+    width: 67.44vmin;
+    height:75vmin;
+    left:50%;
+    translate: -50% 4%;
+}
+#game-container{
+    width: 67.44vmin;
+    height:67.44vmin;
+    left:50%;
+    translate: -50% 4%;
+}
+.tools{
+    height: 3.906vmin;
+    width: 3.906vmin;
+}
+#mines{
+    font-size:2vmin;
+}
+#shovel{
+    left:4.557vmin;
+}
+
+#shovel::before{
+    height:1.302vmin;
+    width:2.343vmin;
+    translate: -0.651vmin 0.651vmin;
+}
+
+#shovel::after{
+    width:0.39vmin;
+    height:2.6vmin;
+    translate: 0.52vmin -0.52vmin;
+}
+
+#clear{
+    top: 70.31vmin;
+    width: 6.07vmin;
+    height:2.70vmin;
+    font-size:1.69vmin;
+    border-width: 0.27vmin;
+}
+.mineBox{
+    font-size:4.167vmin;
+    border: 0.65vmin outset #161647;
+}
+
+.flag::after{
+    border-right: 2.604vmin solid rgb(255, 59, 59);
+    border-top: 1.041vmin solid transparent;
+    border-bottom: 1.041vmin solid transparent;
+    translate: -0.13vmin -0.911vmin;
+}
+.flag::before{
+    width:0.39vmin;
+    height:3.906vmin;
+    translate: 1.302vmin 0px;
+}
+}
+@media(max-aspect-ratio: 7.95/10){
+    *{
+        background:purple;
+    }
+    h1, h2{
+        font-size: 6.18vmin;
+        margin-bottom: 0.39vmin;
+        margin-top: 0.97vmin;
+    }
+    h2{
+        font-size: 4.63vmin;
+    }
+    #info{
+        font-size: 3.09vmin;
+        height: 1.19em;
+        border: 0.19vmin solid grey;
+        right: 0px;
+    }
+    #htp{
+        border: 0.97vmin groove #141414;
+        padding-right: 1.48em;
+        top: 0%;
+        margin: 3.86vmin;
+    }
+    #container{
+        width: 99.99vmin;
+        height: 111.21vmin;
+        left:50%;
+        translate: -50% 5.93%;
+    }
+    #game-container{
+        width: 99.99vmin;
+        height: 99.99vmin;;
+    }
+    .tools{
+        height: 5.79vmin;
+        width: 5.79vmin;
+    }
+    #mines{
+        font-size: 2.97vmin;
+    }
+    #shovel{
+        left: 6.76vmin;
+    }
+
+    #shovel::before{
+        height: 1.93vmin;
+        width: 3.47vmin;
+        translate: -0.97vmin 0.97vmin;
+    }
+
+    #shovel::after{
+        width: 0.58vmin;
+        height: 3.86vmin;
+        translate: 0.77vmin -0.77vmin;
+    }
+
+    #clear{
+        top: 104.26vmin;
+        width: 9vmin;
+        height:4vmin;
+        font-size:2.5vmin;
+        border-width: 0.4vmin;
+    }
+
+    .mineBox{
+        font-size: 6.18vmin;
+        border: 0.96vmin outset #161647;
+    }
+
+    .flag::after{
+        border-right: 3.86vmin solid rgb(255, 59, 59);
+        border-top: 1.54vmin solid transparent;
+        border-bottom: 1.54vmin solid transparent;
+        translate: -0.19vmin -1.35vmin;
+    }
+
+    .flag::before{
+        width: 0.58vmin;
+        height: 5.79vmin;
+        translate: 1.93vmin 0px;
+    }
+}
+*{
+        background:#141414;
+    }
+h1, h2{
+    color: #ffdb6f;
+    font-family: 'lucida sans';
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    margin: auto;
+}
+
+#info{
+    position: absolute;
+    background: #d0d0d0;
+    height: 0.8em;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    right: 0px;
+    
+}
+#htp{
+    color: #ffdb6f;
+    font-family: 'times';
+    padding-right: 1em;
+    position: absolute;
+    width:fit-content;
+    top: 0%;
+    translate: 0% 5%;
+    aspect-ratio: 2.5/1;
+    z-index: 2;
+}
+#container{
+    background-color: transparent;
+    position: absolute;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: auto;  
+    left:50%;
+    translate: -50% 4%;
+}
+#game-container{
+    background-color: transparent;
+    position: absolute;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: auto;  
+    left:50%;
+    translate: -50% 4%;
+}
+.tools{
+    position: absolute;
+    bottom:0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border:  #161647;
+    background: #161647
+}
+#flag{
+    border-style: solid;
+}
+#mines{
+    position: absolute;
+    left:0%;
+    bottom:0%;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: rgb(232, 232, 232);
+    background: transparent;
+    z-index: 1;
+}
+#shovel{
+    border-style: ridge;
+}
+
+#shovel::before{
+    content:'';
+    background: linear-gradient(to right, grey 62%,transparent 38%);
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+    rotate: -45deg;
+}
+
+#shovel::after{
+    content: '';
+    position:absolute;
+    background: rgb(165, 79, 42);
+    rotate: 45deg;
+}
+
+#clear{
+    position: absolute;
+    background-color: white;
+    left:50%;
+    top: 50%;
+    translate: -50% -50%;
+    padding: 0px;
+    z-index:10;
+}
+.mineBox{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: rgb(232, 232, 232);
+    background: #161647;
+    width: var(--width);
+    height:var(--height);
+
+}
+.mineBox:hover{
+    border-style:groove;
+}
+
+.flag::after{
+    position: absolute;
+    content: '';
+    background: transparent;
+    width:0px;
+    height:0px;}
+.flag::before{
+    content: '';
+    position:absolute;
+    background: black;
+}
+.dug{
+    border-style: ridge;
+    background:#22226c
+}
+.explode{
+    background: black;
+    border-color:black;
+}
+.invis{
+    display:none;
+}
+#cover{
+    position: absolute;
+    top:0%;
+    left: 0%;
+    opacity: 0.3;
+    height: 100%;
+    width:100%;
+    background-color: #0000ff;
+    z-index: 3;
+}
