@@ -41,6 +41,7 @@
       document.documentElement.style.setProperty("--col", col);
 
       function getAdjEnt(cond) {
+        //get the squares around the target
         let crd = cond * 1;
         let tempLoop = [crd - 10, crd + 10];
         if (cond.at(-1) == 1) {
@@ -53,19 +54,23 @@
         return tempLoop;
       }
       function mineMaker(num, limit, temp) {
-        temp = new Set(getAdjEnt(num));
+        //create mines that arent on or around the target
+        mines = getAdjEnt(num);
+        temp = new Set(mines);
         temp.add(Number(num));
-        while (temp.size < limit + getAdjEnt(num).length + 1) {
+        while (temp.size < limit + mines.length + 1) {
           temp.add(Math.floor(Math.random() * 100) + 1);
         }
-        getAdjEnt(num).forEach((e) => {
+        mines.forEach((e) => {
           temp.delete(e);
         });
         temp.delete(Number(num));
+        mines = [];
         mines = Array.from(temp);
         mines.sort((a, b) => a - b);
       }
       function boxColor(e) {
+        //color for testing may add it to the numbers later
         switch (e.dataset.numbers) {
           case "-1":
             e.classList.toggle("colorm");
@@ -100,7 +105,7 @@
         }
       }
       function boxNumbers(e) {
-        //On load
+        //Gives the html element data about how many mines around
         if (mines.includes(Number(e.dataset.coords))) {
           e.dataset.numbers = -1;
           //e.innerText = -1;
@@ -114,6 +119,8 @@
         }
       }
       function game(e) {
+        //main game
+
         if (
           blanksC.includes(e.target.dataset.coords) ||
           (shovel && e.target.dataset.flag == 1)
@@ -123,16 +130,11 @@
 
         if (!shovel && !blanksC.includes(e.target.dataset.coords)) {
           if (e.target.dataset.flag == 0 && flag > 0) {
-            //e.target.style.background = "red";
-            //e.target.style.borderColor = "red";
             e.target.classList.add("flag");
             e.target.dataset.flag = 1;
             flag--;
             document.querySelector("#mines").innerText = flag;
           } else if (e.target.dataset.flag == 1) {
-            //boxColor(e.target);
-            //e.target.style.background = "#000065";
-            //e.target.style.borderColor = "#000065";
             e.target.classList.remove("flag");
             e.target.dataset.flag = 0;
             flag++;
@@ -145,9 +147,9 @@
           document.querySelector("#cover").classList.remove("invis");
           document.querySelector("#clear").classList.remove("invis");
           document.querySelector("#clear").value = "LOSE";
-
           return;
         }
+        //loop to uncover blank squares quickly
         let blanksTBC = [e.target.dataset.coords];
         while (blanksTBC.length > 0) {
           if (document.querySelector("#c" + blanksTBC[0]).dataset.flag == 1) {
@@ -174,17 +176,16 @@
             }
           });
           document.querySelector("#c" + blanksTBC[0]).classList.add("dug");
-
           blanksC.push(blanksTBC[0]);
           blanksTBC.shift();
         }
       }
       function clear() {
+        //restart game
         let mineBox = document.querySelectorAll(".mineBox");
         mines.forEach((e) => {
           document.querySelector("#c" + e).dataset.numbers = 0;
           document.querySelector("#c" + e).classList.remove("explode");
-          //document.querySelector("#c" + e).innerText = 0;
         });
         blanksC = [];
         mines = [];
@@ -221,9 +222,9 @@
           document.querySelector("#game-container").appendChild(divCreator);
         }
         //on load game container
+        document.querySelector("#mines").innerText = flag;
         let mineBox = document.querySelectorAll(".mineBox");
         mineBox.forEach((e) => {
-          //boxColor(e);
           e.addEventListener("click", (e) => {
             if (blanksC.length == 0) {
               mineMaker(e.target.dataset.coords, flag);
@@ -238,9 +239,9 @@
               document.querySelector("#clear").value = "WIN";
             }
           });
+          //fancy effect on holding the screen
           let prevBoxAt = document.querySelector("#cover");
           e.addEventListener("touchstart", (e) => {
-            //e.preventDefault();
             prevBoxAt = document.elementFromPoint(
               e.touches[0].clientX,
               e.touches[0].clientY,
@@ -248,8 +249,6 @@
             prevBoxAt.classList.add("mineBoxTouch");
           });
           e.addEventListener("touchmove", (e) => {
-            //e.preventDefault();
-            //mineBox.includes(e) ? console.log("a") : null;
             let boxAt = document.elementFromPoint(
               e.touches[0].clientX,
               e.touches[0].clientY,
@@ -257,7 +256,7 @@
             if (
               boxAt.parentElement != document.getElementById("game-container")
             ) {
-              prevBoxAt.classList.toggle("mineBoxTouch");
+              prevBoxAt.classList.remove("mineBoxTouch");
               prevBoxAt = document.querySelector("#cover");
               return;
             } else if (prevBoxAt.id != boxAt.id) {
@@ -267,7 +266,6 @@
             }
           });
           e.addEventListener("touchend", (e) => {
-            //e.preventDefault();
             prevBoxAt.classList.remove("mineBoxTouch");
           });
         });
@@ -288,12 +286,11 @@
               document.querySelector('[data-tool="flag"]').style.borderStyle =
                 "solid";
             }
-            //console.log(shovel);
           });
         });
-        document.querySelector("#mines").innerText = flag;
         //Clear button
         document.querySelector("#clear").addEventListener("click", clear);
+        //Info popup
         const info = () => {
           document.querySelector("#htp").classList.remove("invis");
           setTimeout(() => {
@@ -312,6 +309,7 @@
         document
           .querySelector("#info")
           .addEventListener("click", info, { once: true });
+        //responsiveness
         window.addEventListener("resize", () => {
           if (window.innerWidth / window.innerHeight < 0.795) {
             document.documentElement.style.setProperty("--width", "7.71vmin");

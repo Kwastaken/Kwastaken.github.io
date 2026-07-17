@@ -304,7 +304,7 @@ h1, h2{
 .invis{
     display:none;
 }
-@media(hover:hover){
+@media(hover: hover) and (pointer: fine){
 .mineBox:hover{
     border-style:groove;
 }
