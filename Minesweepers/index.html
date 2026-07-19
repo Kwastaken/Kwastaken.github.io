@@ -24,7 +24,7 @@
       </div>
       <div id="game-container" class="container"></div>
       <div id="flag" class="tools flag" data-tool="flag">
-        <div id="mines" class=""></div>
+        <div id="mines" data-mines="" class=""></div>
       </div>
       <div id="shovel" class="tools" data-tool="shovel"></div>
     </div>
@@ -131,13 +131,11 @@
           if (e.dataset.flag == 0 && flag > 0) {
             e.classList.add("flag");
             e.dataset.flag = 1;
-            flag--;
-            document.querySelector("#mines").innerText = flag;
+            document.querySelector("#mines").innerText--;
           } else if (e.dataset.flag == 1) {
             e.classList.remove("flag");
             e.dataset.flag = 0;
-            flag++;
-            document.querySelector("#mines").innerText = flag;
+            document.querySelector("#mines").innerText++;
           }
           return;
         }
