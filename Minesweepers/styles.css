@@ -184,6 +184,9 @@ h2{
 *{
         background:#141414;
     }
+    html, body {
+  touch-action: pan-x pan-y;
+}
 h1, h2{
     color: #ffdb6f;
     font-family: 'lucida sans';
@@ -350,8 +353,31 @@ h1, h2{
     background:#22226c
 }
 .explode{
-    background: black;
-    border-color:black;
+    background: radial-gradient(circle at 50% 50%, rgb(108, 108, 108) 5%, black 50%, transparent 50%);
+    border-color:161647;
+}
+.explode::after{
+    content:'';   
+    height: 7.71vmin;
+    aspect-ratio: 1;
+    opacity: 0.4;
+    background: linear-gradient(344deg,rgba(22, 22, 71, 1) 0%, rgba(68, 32, 79, 1) 11%, rgba(159, 28, 0, 1) 38%, rgba(255, 0, 0, 1) 70%, rgba(255, 219, 111, 1) 100%);
+    position: absolute;
+    z-index: -2;
+    animation: explode 1000ms cubic-bezier(.08,1.19,.34,.9);
+}
+@keyframes explode {
+    from{background:#161647;}
+    to{background: linear-gradient(344deg,rgba(22, 22, 71, 1) 0%, rgba(68, 32, 79, 1) 11%, rgba(159, 28, 0, 1) 38%, rgba(255, 0, 0, 1) 70%, rgba(255, 219, 111, 1) 100%);}
+}
+.explode::before{
+    content:'';   
+    height: 6.5vmin;
+    aspect-ratio: 1;
+    background: radial-gradient(circle,rgb(108, 108, 108) 5%, black 75%);
+    position: absolute;
+    z-index: -1;
+    clip-path: polygon(0% 45%, 25% 45%, 0% 10%, 10% 0%, 45% 25%, 45% 0%, 55% 0%, 55% 25%, 90% 0%, 100% 10%, 75% 45%, 100% 45%, 100% 55%, 75% 55%, 100% 90%, 90% 100%, 55% 75%, 55% 100%, 45% 100%, 45% 75%,10% 100%,0% 90%, 25% 55%, 0% 55%);
 }
 .invis{
     display:none;
@@ -411,9 +437,13 @@ h1, h2{
     border-radius: 50%;
     height: 20px;
     aspect-ratio: 1/1;
-    transition: height 5000ms cubic-bezier(.34,.33,.65,.41);
-    
+    animation: ripple 5s cubic-bezier(.34,.33,.65,.41) 0s;
+    z-index: 1;
 }
 .white-ripple{
     background:radial-gradient(circle, transparent 65%, rgb(255, 255, 255) 100%);
+}
+@keyframes ripple {
+    from{height:20px}
+    to{height:200vmax}
 }

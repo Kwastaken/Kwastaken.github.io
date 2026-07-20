@@ -24,7 +24,7 @@
       </div>
       <div id="game-container" class="container"></div>
       <div id="flag" class="tools flag" data-tool="flag">
-        <div id="mines" data-mines="" class=""></div>
+        <div id="mines" class=""></div>
       </div>
       <div id="shovel" class="tools" data-tool="shovel"></div>
     </div>
@@ -33,7 +33,6 @@
     </div>
     <div id="canvas" data-ripple="1"></div>
     <div id="cover" class="invis" data-ripple="2"></div>
-
     <script>
       let shovel = true;
       let flag = Math.floor(Math.random() * 5) + 10;
@@ -108,6 +107,36 @@
             break;
         }
       }
+      function ripple(e, gameOver) {
+        let x = e.clientX;
+        let y = e.clientY;
+        if (gameOver || e.target.dataset.ripple > 0) {
+          let divCreator = document.createElement("div");
+          divCreator.style.left = x + "px";
+          divCreator.style.top = y + "px";
+          divCreator.className = "ripple ripples";
+          divCreator.dataset.ripple = 1;
+          setTimeout(() => {
+            divCreator.classList.remove("white-ripple");
+            divCreator.remove();
+            console.log("f");
+          }, 5000);
+          if (gameOver) {
+            let posData = e.getBoundingClientRect();
+            divCreator.style.left = posData.x + posData.height / 2 + "px";
+            divCreator.style.top = posData.y + posData.height / 2 + "px";
+            divCreator.classList.add("white-ripple");
+            document.querySelector("#cover").appendChild(divCreator);
+          } else {
+            if (document.querySelector("#cover").classList.contains("invis")) {
+              document.querySelector("#canvas").appendChild(divCreator);
+            } else {
+              divCreator.classList.add("white-ripple");
+              document.querySelector("#cover").appendChild(divCreator);
+            }
+          }
+        }
+      }
       function boxNumbers(e) {
         //Gives the html element data about how many mines around
         if (mines.includes(Number(e.dataset.coords))) {
@@ -121,67 +150,68 @@
       }
       function game(e) {
         //main game
-        if (
-          boxSeen.includes(e.dataset.coords) ||
-          (shovel && e.dataset.flag == 1)
-        ) {
-          return;
-        }
-        if (!shovel && !boxSeen.includes(e.dataset.coords)) {
-          if (e.dataset.flag == 0 && flag > 0) {
-            e.classList.add("flag");
-            e.dataset.flag = 1;
-            document.querySelector("#mines").innerText--;
-          } else if (e.dataset.flag == 1) {
+        if (boxSeen.includes(e.dataset.coords)) {
+          null;
+        } else if (!shovel) {
+          if (e.dataset.flag == 1) {
             e.classList.remove("flag");
             e.dataset.flag = 0;
             document.querySelector("#mines").innerText++;
+          } else if (document.querySelector("#mines").innerText > 0) {
+            e.classList.add("flag");
+            e.dataset.flag = 1;
+            document.querySelector("#mines").innerText--;
           }
-          return;
-        }
-        if (e.dataset.numbers == -1 && e.dataset.flag == 0) {
+        } else if (e.dataset.numbers == -1 && e.dataset.flag == 0) {
           e.classList.add("explode");
           document.querySelector("#cover").classList.remove("invis");
           document.querySelector("#button-container").classList.remove("invis");
           document.querySelector("#button-container").childNodes[0].nodeValue =
             "YOU LOSE";
-          return;
-        }
-        //loop to uncover blank squares quickly
-        let blanksTBC = [e.dataset.coords];
-        while (blanksTBC.length > 0) {
-          if (document.querySelector("#c" + blanksTBC[0]).dataset.flag == 1) {
-            blanksTBC.shift();
-            continue;
-          }
-          if (document.querySelector("#c" + blanksTBC[0]).dataset.numbers > 0) {
+          ripple(e, true);
+        } else {
+          //loop to uncover blank squares quickly
+          let blanksTBC = [e.dataset.coords];
+          while (blanksTBC.length > 0) {
+            if (document.querySelector("#c" + blanksTBC[0]).dataset.flag == 1) {
+              blanksTBC.shift();
+              continue;
+            }
+            if (
+              document.querySelector("#c" + blanksTBC[0]).dataset.numbers > 0
+            ) {
+              document.querySelector("#c" + blanksTBC[0]).classList.add("dug");
+              document.querySelector("#c" + blanksTBC[0]).innerText =
+                document.querySelector("#c" + blanksTBC[0]).dataset.numbers;
+              boxSeen.push(blanksTBC[0]);
+              blanksTBC.shift();
+              continue;
+            }
+            let tempLoop = getAdjEnt(blanksTBC[0]);
+            tempLoop.forEach((e) => {
+              if (
+                !blanksTBC.includes(e.toString()) &&
+                !boxSeen.includes(e.toString()) &&
+                e > 0 &&
+                e < 101
+              ) {
+                blanksTBC.push(e.toString());
+              }
+            });
             document.querySelector("#c" + blanksTBC[0]).classList.add("dug");
-            document.querySelector("#c" + blanksTBC[0]).innerText =
-              document.querySelector("#c" + blanksTBC[0]).dataset.numbers;
             boxSeen.push(blanksTBC[0]);
             blanksTBC.shift();
-            continue;
           }
-          let tempLoop = getAdjEnt(blanksTBC[0]);
-          tempLoop.forEach((e) => {
-            if (
-              !blanksTBC.includes(e.toString()) &&
-              !boxSeen.includes(e.toString()) &&
-              e > 0 &&
-              e < 101
-            ) {
-              blanksTBC.push(e.toString());
-            }
-          });
-          document.querySelector("#c" + blanksTBC[0]).classList.add("dug");
-          boxSeen.push(blanksTBC[0]);
-          blanksTBC.shift();
-        }
-        if (boxSeen.length == 100 - mines.length) {
-          document.querySelector("#cover").classList.remove("invis");
-          document.querySelector("#button-container").classList.remove("invis");
-          document.querySelector("#button-container").childNodes[0].nodeValue =
-            "YOU WIN";
+          if (boxSeen.length == 100 - mines.length) {
+            document.querySelector("#cover").classList.remove("invis");
+            document
+              .querySelector("#button-container")
+              .classList.remove("invis");
+            document.querySelector(
+              "#button-container",
+            ).childNodes[0].nodeValue = "YOU WIN";
+            ripple(e, true);
+          }
         }
       }
       function newGame() {
@@ -193,7 +223,6 @@
           e.innerText = "";
         });
         boxSeen = mines = [];
-        shovel = true;
         flag = Math.floor(Math.random() * 5) + 10;
         document.querySelector("#mines").innerText = flag;
         document.querySelector("#cover").classList.add("invis");
@@ -213,7 +242,10 @@
           divCreator.className = "mineBox";
           divCreator.id = "c" + i;
           divCreator.dataset.coords = i;
-          divCreator.dataset.flag = divCreator.dataset.numbers = 0;
+          divCreator.dataset.flag =
+            divCreator.dataset.numbers =
+            divCreator.dataset.ripple =
+              0;
           document.querySelector("#game-container").appendChild(divCreator);
         }
         //on load game container
@@ -311,37 +343,28 @@
             document.documentElement.style.setProperty("--height", "5.2vmin");
           }
         });
-        document.addEventListener("click", (e) => {
-          let efp = document
-            .elementsFromPoint(e.clientX, e.clientY)
-            .filter((e) => !e.classList.contains("ripple"));
-          //console.log(efp);
-          if (efp[0].dataset.ripple) {
-            let divCreator = document.createElement("div");
-            divCreator.style.left = e.clientX + "px";
-            divCreator.style.top = e.clientY + "px";
-            divCreator.className = "ripples ripple";
-            divCreator.dataset.ripple = "1";
-            setTimeout(() => {
-              divCreator.style.setProperty("height", "200vmax");
-            }, 0.1);
-            setTimeout(() => {
-              divCreator.classList.remove("white-ripple");
-              divCreator.remove();
-            }, 5000);
-            if (!efp.includes(document.querySelector("#cover"))) {
-              document.querySelector("#canvas").appendChild(divCreator);
-            } else {
-              if (shovel) {
-                let posData = efp[2].getBoundingClientRect();
-                divCreator.style.left = posData.x + posData.height / 2 + "px";
-                divCreator.style.top = posData.y + posData.height / 2 + "px";
-                shovel = false;
-              }
-              divCreator.classList.add("white-ripple");
-              document.querySelector("#cover").appendChild(divCreator);
-            }
-          }
+        //ripple waves
+        document.addEventListener("pointerdown", (e) => {
+          ripple(e);
+          let waves = setInterval(() => {
+            ripple(e);
+          }, 500);
+          document.addEventListener(
+            "pointerup",
+            () => {
+              clearInterval(waves);
+              moved = false;
+            },
+            { once: true },
+          );
+          document.addEventListener(
+            "touchend",
+            () => {
+              clearInterval(waves);
+              moved = false;
+            },
+            { once: true },
+          );
         });
       });
     </script>
