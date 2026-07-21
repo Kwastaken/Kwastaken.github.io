@@ -11,38 +11,52 @@
     <div id="container" class="container" data-ripple="1">
       <div id="info">i</div>
       <div id="htp" class="invis">
+        <br>
         <h2>How to play</h2>
         <ol>
           <li>The goal is to uncover all squares without exploding a mine</li>
           <li>The amount of mines is shown by the flag</li>
-          <li>
-            Select the flag to mark potential mines(you have a limited amount)
-          </li>
+          <li>Select the flag to mark potential mines(you have a limited amount)</li>
           <li>Select the shovel to uncover squares</li>
         </ol>
         <p>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Good luck 😉</p>
+        <br>
+        <h3>&nbsp; Help color codes</h3>
+        <ul>
+          <li><span class="color3 grey-text">Purple</span> = dig with shovel</li>
+          <li><span class="color8 grey-text">Green</span> = place flag</li>
+          <li><span class="color4 grey-text">Red</span> = The number that is the cause of the action</li>
+          <li><span class="color6 grey-text">Cyan</span> = Unsure what to do so random</li>
+        </ul>
       </div>
       <div id="game-container" class="container"></div>
       <div id="flag" class="tools flag" data-tool="flag">
         <div id="mines" class=""></div>
       </div>
       <div id="shovel" class="tools" data-tool="shovel"></div>
+      <button id="help" class="help">Click for Help<br />The color codes are in "i"</button>
     </div>
     <div id="button-container" class="button-container invis" data-ripple="2">
       <button id="clear" class="ripple" data-ripple="0">&#x21BA;</button>
     </div>
     <div id="canvas" data-ripple="1"></div>
     <div id="cover" class="invis" data-ripple="2"></div>
+    </div>
     <script>
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       let shovel = true;
+      const touches = {};
       let flag = Math.floor(Math.random() * 5) + 10;
       let row = 10;
       let col = 10;
-      let boxSeen = [];
+      let boxSeen = new Set();
       let mines = [];
+      let boxDug = [];
+      let dugNums = [];
+      let colorCell = [];
+      let boxFlag = new Set();
       document.documentElement.style.setProperty("--col", col);
-
-      function getAdjEnt(crd) {
+      function getAdjCells(crd) {
         //get the squares around the target
         //throw new Error("pfft");
         crd *= 1;
@@ -54,11 +68,11 @@
         } else {
           tempLoop.push(crd + 1, crd - 9, crd + 11, crd - 1, crd + 9, crd - 11);
         }
-        return tempLoop;
+        return tempLoop.filter((e) => e < 101 && e > 0);
       }
       function mineMaker(target, limit, temp) {
         //create mines that arent on or around the target
-        mines = getAdjEnt(target);
+        mines = getAdjCells(target);
         temp = new Set(mines);
         temp.add(Number(target));
         while (temp.size < limit + mines.length + 1) {
@@ -72,55 +86,76 @@
         mines = Array.from(temp);
         mines.sort((a, b) => a - b);
       }
-      function boxColor(e) {
+      function boxColor(e, remove) {
         //color for testing may add it to the numbers later
-        switch (e.dataset.numbers) {
-          case "-1":
-            e.classList.toggle("colorm");
-            break;
-          case "0":
-            e.classList.toggle("color0");
-            break;
-          case "1":
-            e.classList.toggle("color1");
-            break;
-          case "2":
-            e.classList.toggle("color2");
-            break;
-          case "3":
-            e.classList.toggle("color3");
-            break;
-          case "4":
-            e.classList.toggle("color4");
-            break;
-          case "5":
-            e.classList.toggle("color5");
-            break;
-          case "6":
-            e.classList.toggle("color6");
-            break;
-          case "7":
-            e.classList.toggle("color7");
-            break;
-          case "8":
-            e.classList.toggle("color8");
-            break;
+        if (!remove) {
+          switch (e.dataset.adjMines) {
+            case "-1":
+              e.classList.toggle("colorm");
+              break;
+            case "0":
+              e.classList.toggle("color0");
+              break;
+            case "1":
+              e.classList.toggle("color1");
+              break;
+            case "2":
+              e.classList.toggle("color2");
+              break;
+            case "3":
+              e.classList.toggle("color3");
+              break;
+            case "4":
+              e.classList.toggle("color4");
+              break;
+            case "5":
+              e.classList.toggle("color5");
+              break;
+            case "6":
+              e.classList.toggle("color6");
+              break;
+            case "7":
+              e.classList.toggle("color7");
+              break;
+            case "8":
+              e.classList.toggle("color8");
+              break;
+          }
+        } else {
+          switch (true) {
+            case e.classList.contains("color"):
+              e.classList.remove("colorm");
+            case e.classList.contains("color0"):
+              e.classList.remove("color0");
+            case e.classList.contains("color1"):
+              e.classList.remove("color1");
+            case e.classList.contains("color2"):
+              e.classList.remove("color2");
+            case e.classList.contains("color3"):
+              e.classList.remove("color3");
+            case e.classList.contains("color4"):
+              e.classList.remove("color4");
+            case e.classList.contains("color5"):
+              e.classList.remove("color5");
+            case e.classList.contains("color6"):
+              e.classList.remove("color6");
+            case e.classList.contains("color7"):
+              e.classList.remove("color7");
+            case e.classList.contains("color8"):
+              e.classList.remove("color8");
+              break;
+          }
         }
       }
-      function ripple(e, gameOver) {
-        let x = e.clientX;
-        let y = e.clientY;
+      function ripple(e, timing, gameOver) {
         if (gameOver || e.target.dataset.ripple > 0) {
           let divCreator = document.createElement("div");
-          divCreator.style.left = x + "px";
-          divCreator.style.top = y + "px";
           divCreator.className = "ripple ripples";
           divCreator.dataset.ripple = 1;
           setTimeout(() => {
             divCreator.classList.remove("white-ripple");
             divCreator.remove();
-            console.log("f");
-          }, 5000);
+          }, timing);
           if (gameOver) {
             let posData = e.getBoundingClientRect();
             divCreator.style.left = posData.x + posData.height / 2 + "px";
@@ -128,6 +163,8 @@
             divCreator.classList.add("white-ripple");
             document.querySelector("#cover").appendChild(divCreator);
           } else {
+            divCreator.style.left = touches["waves" + e.pointerId].x + "px";
+            divCreator.style.top = touches["waves" + e.pointerId].y + "px";
             if (document.querySelector("#cover").classList.contains("invis")) {
               document.querySelector("#canvas").appendChild(divCreator);
             } else {
@@ -140,158 +177,186 @@
       function boxNumbers(e) {
         //Gives the html element data about how many mines around
         if (mines.includes(Number(e.dataset.coords))) {
-          e.dataset.numbers = -1;
+          e.dataset.adjMines = -1;
         }
-        if (e.dataset.numbers != -1) {
-          e.dataset.numbers = getAdjEnt(e.dataset.coords).filter((e) =>
-            mines.includes(e),
-          ).length;
+        if (e.dataset.adjMines != -1) {
+          e.dataset.adjMines = getAdjCells(e.dataset.coords).filter((e) => mines.includes(e)).length;
         }
       }
       function game(e) {
         //main game
-        if (boxSeen.includes(e.dataset.coords)) {
+        if (boxSeen.has(e.dataset.coords)) {
           null;
         } else if (!shovel) {
           if (e.dataset.flag == 1) {
             e.classList.remove("flag");
             e.dataset.flag = 0;
+            if (e.dataset.adjMines == -1) {
+              boxFlag.delete(Number(e.dataset.coords));
+              colorCell.splice(colorCell.indexOf(Number(e.dataset.coords)), 1);
+            }
             document.querySelector("#mines").innerText++;
           } else if (document.querySelector("#mines").innerText > 0) {
             e.classList.add("flag");
+            if (e.dataset.adjMines == -1) {
+              boxFlag.add(Number(e.dataset.coords));
+              colorCell.push(Number(e.dataset.coords));
+            }
+            boxColor(e, true);
             e.dataset.flag = 1;
             document.querySelector("#mines").innerText--;
           }
-        } else if (e.dataset.numbers == -1 && e.dataset.flag == 0) {
+        } else if (e.dataset.adjMines == -1 && e.dataset.flag == 0) {
           e.classList.add("explode");
+          boxColor(e, true);
           document.querySelector("#cover").classList.remove("invis");
           document.querySelector("#button-container").classList.remove("invis");
-          document.querySelector("#button-container").childNodes[0].nodeValue =
-            "YOU LOSE";
-          ripple(e, true);
+          document.querySelector("#button-container").childNodes[0].nodeValue = "YOU LOSE";
+          ripple(e, 1000, true);
         } else {
           //loop to uncover blank squares quickly
-          let blanksTBC = [e.dataset.coords];
-          while (blanksTBC.length > 0) {
-            if (document.querySelector("#c" + blanksTBC[0]).dataset.flag == 1) {
-              blanksTBC.shift();
-              continue;
+          let boxUnseen = [e.dataset.coords];
+          while (boxUnseen.length > 0) {
+            //await delay(100);
+            if (document.querySelector("#c" + boxUnseen[0]).dataset.flag == 1) {
+              boxUnseen.shift();
+            } else if (document.querySelector("#c" + boxUnseen[0]).dataset.adjMines > 0) {
+              document.querySelector("#c" + boxUnseen[0]).classList.add("dug");
+              document.querySelector("#c" + boxUnseen[0]).classList.remove("color3");
+              document.querySelector("#c" + boxUnseen[0]).innerText = document.querySelector("#c" + boxUnseen[0]).dataset.adjMines;
+              boxDug.push(boxUnseen[0]);
+              boxSeen.add(boxUnseen[0]);
+              dugNums.push(boxUnseen[0]);
+              boxUnseen.shift();
+            } else {
+              getAdjCells(boxUnseen[0]).forEach((e) => {
+                if (!boxUnseen.includes(e.toString()) && !boxSeen.has(e.toString())) {
+                  boxUnseen.push(e.toString());
+                }
+              });
+              document.querySelector("#c" + boxUnseen[0]).classList.add("dug");
+
+              boxColor(document.querySelector("#c" + boxUnseen[0]), true);
+              boxSeen.add(boxUnseen[0]);
+              boxDug.push(boxUnseen[0]);
+              boxUnseen.shift();
             }
-            if (
-              document.querySelector("#c" + blanksTBC[0]).dataset.numbers > 0
-            ) {
-              document.querySelector("#c" + blanksTBC[0]).classList.add("dug");
-              document.querySelector("#c" + blanksTBC[0]).innerText =
-                document.querySelector("#c" + blanksTBC[0]).dataset.numbers;
-              boxSeen.push(blanksTBC[0]);
-              blanksTBC.shift();
-              continue;
-            }
-            let tempLoop = getAdjEnt(blanksTBC[0]);
-            tempLoop.forEach((e) => {
-              if (
-                !blanksTBC.includes(e.toString()) &&
-                !boxSeen.includes(e.toString()) &&
-                e > 0 &&
-                e < 101
-              ) {
-                blanksTBC.push(e.toString());
-              }
-            });
-            document.querySelector("#c" + blanksTBC[0]).classList.add("dug");
-            boxSeen.push(blanksTBC[0]);
-            blanksTBC.shift();
           }
-          if (boxSeen.length == 100 - mines.length) {
+          if (boxSeen.size == 100 - mines.length) {
             document.querySelector("#cover").classList.remove("invis");
-            document
-              .querySelector("#button-container")
-              .classList.remove("invis");
-            document.querySelector(
-              "#button-container",
-            ).childNodes[0].nodeValue = "YOU WIN";
-            ripple(e, true);
+            document.querySelector("#button-container").classList.remove("invis");
+            document.querySelector("#button-container").childNodes[0].nodeValue = "YOU WIN";
+            ripple(e, 1000, true);
           }
         }
+        boxDug.forEach((e) => {
+          document.querySelector("#c" + e).classList.remove("color4");
+        });
       }
       function newGame() {
         //restart game
         let mineBox = document.querySelectorAll(".mineBox");
         mineBox.forEach((e) => {
-          e.dataset.flag = e.dataset.numbers = 0;
+          e.dataset.flag = e.dataset.adjMines = 0;
           e.classList.remove("dug", "flag", "explode");
           e.innerText = "";
+          boxColor(e, true);
         });
-        boxSeen = mines = [];
+        mines = dugNums = boxDug = colorCell = [];
+        boxSeen.clear();
+        boxFlag.clear();
         flag = Math.floor(Math.random() * 5) + 10;
         document.querySelector("#mines").innerText = flag;
         document.querySelector("#cover").classList.add("invis");
         document.querySelector("#button-container").classList.add("invis");
       }
-
+      function help() {
+        boxDug.forEach((e) => {
+          document.querySelector("#c" + e).classList.remove("color4");
+        });
+        console.clear();
+        dugNums.sort();
+        dugNums.toReversed().some((e) => {
+          let cell = document.querySelector("#c" + e);
+          let adjCell = getAdjCells(e).filter((e) => !boxDug.includes(e.toString()));
+          if (cell.dataset.adjMines == adjCell.length) {
+            adjCell = adjCell.filter((e) => !colorCell.includes(e));
+            adjCell.some((e) => {
+              let currCell = document.querySelector("#c" + e);
+              currCell.classList.add("color8");
+              cell.classList.add("color4");
+              boxFlag.add(e);
+              colorCell.push(e);
+              return adjCell.length > 1;
+            });
+            if (adjCell.length < 2) {
+              dugNums.splice(dugNums.indexOf(e), 1);
+            }
+            return adjCell.length > 0;
+          } else if (cell.dataset.adjMines == adjCell.filter((e) => boxFlag.has(e)).length) {
+            adjCell = adjCell.filter((e) => !boxFlag.has(e) && !colorCell.includes(e));
+            adjCell.some((e) => {
+              colorCell.push(e);
+              document.querySelector("#c" + e).classList.add("color3");
+              cell.classList.add("color4");
+              return adjCell.length > 1;
+            });
+            if (adjCell.length < 2) {
+              dugNums.splice(dugNums.indexOf(e), 1);
+            }
+            return adjCell.length > 0;
+          }
+        });
+        !dugNums?.length ? document.querySelector("#c" + (Math.floor(Math.random() * 100) + 1)).classList.add("color6") : null;
+      }
       document.addEventListener("DOMContentLoaded", () => {
         // on load fill container
-        document.documentElement.style.setProperty(
-          "--width",
-          window.innerWidth / window.innerHeight < 0.795
-            ? "7.71vmin"
-            : "5.2vmin",
-        );
+        document.documentElement.style.setProperty("--width", window.innerWidth / window.innerHeight < 0.795 ? "7.71vmin" : "5.2vmin");
         for (let i = 1; i <= row * col; i++) {
           let divCreator = document.createElement("div");
           divCreator.className = "mineBox";
           divCreator.id = "c" + i;
           divCreator.dataset.coords = i;
-          divCreator.dataset.flag =
-            divCreator.dataset.numbers =
-            divCreator.dataset.ripple =
-              0;
+          divCreator.dataset.flag = divCreator.dataset.adjMines = divCreator.dataset.ripple = 0;
           document.querySelector("#game-container").appendChild(divCreator);
         }
         //on load game container
-        document
-          .querySelector("#mines")
-          .appendChild(document.createTextNode(flag));
-        let mineBox = document.querySelectorAll(".mineBox");
-        mineBox.forEach((e) => {
-          e.addEventListener("click", (e) => {
-            if (boxSeen.length == 0 && shovel) {
+        document.querySelector("#mines").appendChild(document.createTextNode(flag));
+        //click mines cell
+        let gameContainer = document.querySelector("#game-container");
+        gameContainer.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (e.target.id != "game-container") {
+            if (boxSeen.size == 0 && shovel) {
               mineMaker(e.target.dataset.coords, flag);
               for (let i = 1; i <= row * col; i++) {
                 boxNumbers(document.querySelector("#c" + i));
               }
             }
             game(e.target);
-          });
-          //fancy effect on holding the screen
-          let prevBoxAt = document.querySelector("#cover");
-          e.addEventListener("touchstart", (e) => {
-            prevBoxAt = document.elementFromPoint(
-              e.touches[0].clientX,
-              e.touches[0].clientY,
-            );
-            prevBoxAt.classList.add("mineBoxTouch");
-          });
-          e.addEventListener("touchmove", (e) => {
-            let boxAt = document.elementFromPoint(
-              e.touches[0].clientX,
-              e.touches[0].clientY,
-            );
-            if (
-              boxAt.parentElement != document.getElementById("game-container")
-            ) {
-              prevBoxAt.classList.remove("mineBoxTouch");
-              prevBoxAt = document.querySelector("#cover");
-              return;
-            } else if (prevBoxAt.id != boxAt.id) {
-              boxAt.classList.toggle("mineBoxTouch");
-              prevBoxAt.classList.toggle("mineBoxTouch");
-              prevBoxAt = boxAt;
-            }
-          });
-          e.addEventListener("touchend", (e) => {
+          }
+        });
+        document.querySelector("#help").addEventListener("click", help);
+        //fancy effect on holding the screen
+        let prevBoxAt = document.querySelector("#cover");
+        gameContainer.addEventListener("touchstart", (e) => {
+          prevBoxAt = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+          prevBoxAt.classList.add("mineBoxTouch");
+        });
+        gameContainer.addEventListener("touchmove", (e) => {
+          let boxAt = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+          if (boxAt.parentElement != document.getElementById("game-container")) {
             prevBoxAt.classList.remove("mineBoxTouch");
-          });
+            prevBoxAt = document.querySelector("#cover");
+            return;
+          } else if (prevBoxAt.id != boxAt.id) {
+            boxAt.classList.toggle("mineBoxTouch");
+            prevBoxAt.classList.toggle("mineBoxTouch");
+            prevBoxAt = boxAt;
+          }
+        });
+        gameContainer.addEventListener("touchend", (e) => {
+          prevBoxAt.classList.remove("mineBoxTouch");
         });
         //on load game tools
         let tools = document.querySelectorAll(".tools");
@@ -299,16 +364,12 @@
           e.addEventListener("click", (e) => {
             if (e.target.dataset.tool != "shovel") {
               shovel = false;
-              document.querySelector('[data-tool="flag"]').style.borderStyle =
-                "ridge";
-              document.querySelector('[data-tool="shovel"]').style.borderStyle =
-                "solid";
+              document.querySelector('[data-tool="flag"]').style.borderStyle = "ridge";
+              document.querySelector('[data-tool="shovel"]').style.borderStyle = "solid";
             } else {
               shovel = true;
-              document.querySelector('[data-tool="shovel"]').style.borderStyle =
-                "ridge";
-              document.querySelector('[data-tool="flag"]').style.borderStyle =
-                "solid";
+              document.querySelector('[data-tool="shovel"]').style.borderStyle = "ridge";
+              document.querySelector('[data-tool="flag"]').style.borderStyle = "solid";
             }
           });
         });
@@ -322,17 +383,13 @@
               "click",
               () => {
                 document.querySelector("#htp").classList.add("invis");
-                document
-                  .querySelector("#info")
-                  .addEventListener("click", info, { once: true });
+                document.querySelector("#info").addEventListener("click", info, { once: true });
               },
               { once: true },
             );
           }, 0.1);
         };
-        document
-          .querySelector("#info")
-          .addEventListener("click", info, { once: true });
+        document.querySelector("#info").addEventListener("click", info, { once: true });
         //responsiveness
         window.addEventListener("resize", () => {
           if (window.innerWidth / window.innerHeight < 0.795) {
@@ -345,26 +402,22 @@
         });
         //ripple waves
         document.addEventListener("pointerdown", (e) => {
-          ripple(e);
-          let waves = setInterval(() => {
-            ripple(e);
+          
+          touches["waves" + e.pointerId] = {};
+          touches["waves" + e.pointerId].x = e.clientX;
+          touches["waves" + e.pointerId].y = e.clientY;
+          ripple(e, 5000);
+          touches["waves" + e.pointerId].waves = setInterval(() => {
+            ripple(e, 5000);
           }, 500);
-          document.addEventListener(
-            "pointerup",
-            () => {
-              clearInterval(waves);
-              moved = false;
-            },
-            { once: true },
-          );
-          document.addEventListener(
-            "touchend",
-            () => {
-              clearInterval(waves);
-              moved = false;
-            },
-            { once: true },
-          );
+        });
+        document.addEventListener("pointerup", (e) => {
+          clearInterval(touches["waves" + e.pointerId].waves);
+          delete touches["waves" + e.pointerId];
+        });
+        document.addEventListener("pointercancel", (e) => {
+          clearInterval(touches["waves" + e.pointerId].waves);
+          delete touches["waves" + e.pointerId];
         });
       });
     </script>
