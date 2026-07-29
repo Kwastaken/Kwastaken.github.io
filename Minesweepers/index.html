@@ -332,6 +332,7 @@
           e.stopPropagation();
           if (e.target.id != "game-container") {
             if (boxSeen.size == 0 && shovel) {
+              firstHelp=false;
               mineMaker(e.target.dataset.coords, flag);
               for (let i = 1; i <= row * col; i++) {
                 boxNumbers(document.querySelector("#c" + i));
