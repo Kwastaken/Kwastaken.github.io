@@ -55,6 +55,7 @@
       let dugNums = [];
       let colorCell = [];
       let boxFlag = new Set();
+      let firstHelp=true;
       document.documentElement.style.setProperty("--col", col);
       function getAdjCells(crd) {
         //get the squares around the target
@@ -253,7 +254,7 @@
           document.querySelector("#c" + e).classList.remove("color4");
         });
       }
-      function newGame() {
+      function newGame(){
         //restart game
         let mineBox = document.querySelectorAll(".mineBox");
         mineBox.forEach((e) => {
@@ -262,7 +263,8 @@
           e.innerText = "";
           boxColor(e, true);
         });
-        mines = dugNums = boxDug = colorCell = [];
+        firstHelp=true;
+        mines.length = dugNums.length = boxDug.length = colorCell.length = 0;
         boxSeen.clear();
         boxFlag.clear();
         flag = Math.floor(Math.random() * 5) + 10;
@@ -307,7 +309,9 @@
             return adjCell.length > 0;
           }
         });
-        !dugNums?.length ? document.querySelector("#c" + (Math.floor(Math.random() * 100) + 1)).classList.add("color6") : null;
+        if(firstHelp) {document.querySelector("#c" + (Math.floor(Math.random() * 100) + 1)).classList.add("color6");
+          firstHelp=false;
+        }
       }
       document.addEventListener("DOMContentLoaded", () => {
         // on load fill container
