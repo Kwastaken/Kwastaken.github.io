@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+
+    <title>Document</title>
+  </head>
+  <body>
+    <canvas id="game"> </canvas>
+
+    <script>
+      const canvas = document.getElementById("game");
+      const ctx = canvas.getContext("2d");
+      canvas.width = 1000;
+      canvas.height = 1000;
+      const gameSpeed = 5;
+      const g = 10;
+      const pgap = 300;
+      const pspacing = 300;
+      const pW = 100;
+      const rectW = 70;
+      const rectH = 70;
+      const rectM = 450;
+      const pressedKeys = new Set();
+      const rtv = Math.sqrt((2 * rectM * g) / rectW);
+      let drag = 9.8;
+      let variance = 250;
+      let t = 0.5;
+      let rx = 150;
+      let ry = 450;
+      let rvx = 0;
+      let rvy = -6;
+      let px = 5;
+      let holeH = [];
+      let startOffset = 600;
+      //console.log(startOffset);
+      let tickCounter = -startOffset;
+      let isPause = true;
+      let isGameOver = true;
+      function pipes() {
+        const pipeSpeed = 5;
+        if (startOffset > 0) {
+          startOffset -= gameSpeed;
+          px = startOffset;
+        } else {
+          startOffset -= gameSpeed;
+          px = pspacing + pW - (tickCounter % (pspacing + pW));
+        }
+        //console.log(`${tickCounter} ,${px}`);
+
+        if (px == pspacing + pW && startOffset < 0) {
+          holeH.shift();
+          //console.log(holeH);
+        }
+        for (let i = 0; i < Math.ceil(canvas.width / (pspacing + pW) + 1); i++) {
+          if (holeH[i] == null) holeH.push(Math.floor(Math.random() * (canvas.height - pgap - 2 * variance)) + variance);
+          ctx.fillStyle = "green";
+          ctx.fillRect((pW + pspacing) * i + px - pW, 0, pW, holeH[i]);
+          ctx.fillRect((pW + pspacing) * i + px - pW, holeH[i] + pgap, pW, canvas.height - holeH[i] - pgap);
+          ctx.fillRect((pW + pspacing) * i + px - pW * 1.2, holeH[i] - pW * 0.3, pW * 1.4, pW * 0.3);
+          ctx.fillRect((pW + pspacing) * i + px - pW * 1.2, holeH[i] + pgap, pW * 1.4, pW * 0.3);
+
+          /*const pHighlight = ctx.createLinearGradient((pW + pspacing) * i + px - pW, 0, (pW + pspacing) * i + px - pW * 0.8, 0);
+          pHighlight.addColorStop(0, "lightgreen");
+          pHighlight.addColorStop(1, "green");
+          ctx.fillStyle = pHighlight;
+          ctx.fillRect((pW + pspacing) * i + px - pW, 0, pW, holeH[i]);
+          ctx.fillRect((pW + pspacing) * i + px - pW, holeH[i] + pgap, pW * 0.2, canvas.height - holeH[i] - pgap);
+
+          const pShadow = ctx.createLinearGradient((pW + pspacing) * i + px - pW * 0.2, 0, (pW + pspacing) * i + px, 0);
+          pShadow.addColorStop(0, "green");
+          pShadow.addColorStop(1, "darkgreen");
+          ctx.fillStyle = pShadow;
+          ctx.fillRect((pW + pspacing) * i + px - pW * 0.2, 0, pW * 0.2, holeH[i]);
+          ctx.fillRect((pW + pspacing) * i + px - pW * 0.2, holeH[i] + pgap, pW * 0.2, canvas.height - holeH[i] - pgap);*/
+        }
+      }
+
+      function bird() {
+        t = (0.5 * gameSpeed) / 5;
+        if (canvas.height < ry + rectH - 1) {
+          rvy = 0;
+        } else if (rtv < g * t + rvy) {
+          rvy = rtv;
+        } else {
+          rvy >= 0 ? (rvy += (g - drag) * t) : (rvy += g * t);
+        }
+        //console.log(rvy);
+        rx += rvx;
+        ry += rvy;
+        if (rvy >= 0) drag /= 1.01;
+        if (canvas.height < ry + rectH) ry = canvas.height - rectH;
+
+        ctx.fillStyle = "yellow";
+        ctx.fillRect(rx, ry, rectW, rectH);
+        ctx.fillStyle = "orange";
+        ctx.fillRect(rx + rectW * 0.8, ry + rectH * 0.6, rectW / 3, rectH / 6);
+        ctx.fillStyle = "black";
+        ctx.fillRect(rx + rectW * 0.6, ry + rectH * 0.3, rectW / 9, rectH / 9);
+
+        if (rvy < 0 || rvy > 3 || isGameOver) {
+          ctx.beginPath();
+          ctx.rect(rx + rectW * 0.25, ry + rectH * 0.55, rectW * 0.3, rectH * (rvy < 0 ? 0.3 : 0.15));
+          ctx.rect(rx + rectW * 0.15, ry + rectH * 0.65, rectW * 0.1, rectH * (rvy < 0 ? 0.2 : 0.1));
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = "black";
+          ctx.stroke();
+          ctx.fillStyle = "#ffee00";
+          ctx.fill();
+          ctx.closePath();
+        } else {
+          ctx.beginPath();
+          ctx.strokeStyle = "#000000";
+          ctx.lineWidth = 5;
+          ctx.moveTo(rx + rectW * 0.55, ry + rectH * 0.55);
+          ctx.lineTo(rx + rectW * 0.25, ry + rectH * 0.55);
+          ctx.lineTo(rx + rectW * 0.25, ry + rectH * 0.65);
+          ctx.lineTo(rx + rectW * 0.15, ry + rectH * 0.65);
+          ctx.stroke();
+          ctx.closePath();
+        }
+      }
+
+      function collisions(gapHeight) {
+        function gameOver() {
+          const currentScore = Math.floor(Math.max(0, tickCounter + pspacing + pW + rx) / (pspacing + pW));
+          if (localStorage.getItem("highScore") < currentScore) localStorage.setItem("highScore", currentScore);
+          ctx.save();
+          ctx.fillStyle = "black";
+          ctx.translate(canvas.width / 2, canvas.height / 2);
+          ctx.textBaseline = "middle";
+          ctx.fillText("Game Over", 0, 0);
+          ctx.fillText("Highscore: " + localStorage.getItem("highScore"), 0, canvas.height * 0.1);
+          ctx.restore();
+          //console.log(ctx.getTransform());
+          isPause = !isPause;
+          isGameOver = !isGameOver;
+          holeH = [];
+        }
+        //console.log(gapHeight);
+
+        if (ry + rectH == canvas.height + 1) {
+          gameOver();
+        } else if (ry < gapHeight || ry + rectH > gapHeight + pgap) {
+          if (rx + rectW > px - pW && rx + rectW < px) {
+            //console.log("Front collision");
+            gameOver();
+          } else if (rx > px - pW && rx < px) {
+            //console.log("Back collision");
+            gameOver();
+          } else if ((ry + rectH > gapHeight - pW * 0.3 && ry < gapHeight) || (ry < gapHeight + pgap + pW * 0.3 && ry + rectH > gapHeight + pgap)) {
+            // console.log("In range of lip");
+            if (rx + rectW > px - pW * 1.2 && rx + rectW < px + pW * 0.2) {
+              // console.log("Front collision");
+              gameOver();
+            } else if (rx > px - pW * 1.2 && rx < px + pW * 0.2) {
+              // console.log("Back collision");
+              gameOver();
+            }
+          }
+        }
+      }
+
+      const gameStart = () => {
+        rx = 150;
+        variance = 150;
+        ry = 450;
+        rvx = 0;
+        rvy = 0;
+        px = 5;
+        startOffset = 600;
+        //console.log(startOffset);
+        tickCounter = -startOffset;
+        isPause = false;
+        isGameOver = false;
+        //console.log("starting");
+        requestAnimationFrame(game);
+      };
+
+      function game() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        bird();
+        pipes();
+        collisions(holeH[0]);
+        ctx.font = "20vmin Arial";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.save();
+        ctx.translate(canvas.width / 2, 0);
+        ctx.fillText(Math.floor(Math.max(0, tickCounter + pspacing + pW + rx) / (pspacing + pW)), 0, 0);
+        //console.log(tickCounter / pspacing + pW);
+        ctx.restore();
+        tickCounter += gameSpeed;
+        //console.log(tickCounter);
+        if (!isPause) requestAnimationFrame(game);
+      }
+
+      const gameControls = () => {
+        //console.log(pressedKeys);
+
+        if (pressedKeys.has("ArrowUp") || pressedKeys.has(" ")) {
+          if (isGameOver) gameStart();
+          rvy = -3 * g;
+          drag = 10;
+          pressedKeys.delete(" ");
+          pressedKeys.delete("ArrowUp");
+        }
+        if (pressedKeys.has("p")) {
+          isPause = !isPause;
+          if (!isPause && !isGameOver) game();
+          pressedKeys.delete("p");
+        }
+        function stepAnimFrame() {
+          if (pressedKeys.has("l")) game();
+          pressedKeys.delete("l");
+        }
+        stepAnimFrame();
+        setTimeout(() => requestAnimationFrame(gameControls));
+
+        //console.log("a");
+      };
+
+      requestAnimationFrame(game);
+      requestAnimationFrame(gameControls);
+      document.addEventListener("keydown", (e) => pressedKeys.add(e.key));
+      document.addEventListener("keyup", (e) => setTimeout(() => pressedKeys.delete(e.key)));
+      document.addEventListener("touchstart", (e) => pressedKeys.add(" "));
+      document.addEventListener("touchend", (e) => setTimeout(() => pressedKeys.delete(" ")));
+      window.ontouchstart;
+    </script>
+  </body>
+</html>
